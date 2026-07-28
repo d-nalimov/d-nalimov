@@ -685,16 +685,16 @@ async function loadTop(gender) {
  }
  el.innerHTML = d.top.map((p, i) => {
  const avatar = p.photo_front ? API + '/photo/' + p.photo_front : '';
- const score = p.score ? p.score.toFixed(1) : '—';
+ const tier = p.tier || '';
  return `
  <div class="top-item">
  <div class="top-rank">${i + 1}</div>
  <div class="top-avatar">${avatar ? `<img src="${avatar}" alt="" onclick="openPhoto(this.src)">` : ''}</div>
  <div class="top-info">
  <div class="top-name">${escapeHtml(p.display_name || p.username || 'Аноним')}${p.age ? ', ' + p.age : ''}</div>
- <div class="top-sub">${p.ratings_count} оцен. · ${(p.tier || '').toUpperCase()}</div>
+ <div class="top-sub">${p.ratings_count} оцен.</div>
  </div>
- <div class="top-score">${score}</div>
+ <div class="rate-item-tier ${tier}">${tier}</div>
  </div>`;
  }).join('');
 }
