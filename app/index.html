@@ -33,13 +33,17 @@ body {
 .nav-btn.active { background: #141416; color: #fff; }
 .nav-btn svg { width: 21px; height: 21px; }
 
+/* заголовок по центру: кнопка «назад» выведена из потока,
+   поэтому её наличие не сдвигает надпись */
 .header {
- display: flex; align-items: center; gap: 12px;
- padding: 18px 20px 10px;
+ position: relative;
+ display: flex; align-items: center; justify-content: center;
+ padding: 18px 20px 10px; min-height: 58px;
 }
-.header-title { font-size: 21px; font-weight: 900; letter-spacing: -.03em; }
+.header-title { font-size: 21px; font-weight: 900; letter-spacing: -.03em; padding: 0 48px; text-align: center; }
 .header-title .dim { color: var(--dim); }
 .back-btn {
+ position: absolute; left: 20px; top: 50%; margin-top: -20px;
  width: 40px; height: 40px; flex-shrink: 0; padding: 0;
  border-radius: 999px; border: 1px solid var(--line); background: #fff; color: #141416;
  display: flex; align-items: center; justify-content: center; cursor: pointer;
