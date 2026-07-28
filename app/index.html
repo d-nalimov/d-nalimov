@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MogMatch</title>
+<title>ДайМогнуть!</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -58,7 +58,7 @@ body.in-tg .back-btn { display: none; }
   border-radius: 22px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.04);
 }
 .profile-photo {
-  width: 100%; aspect-ratio: 1/1; max-height: 46vh; background: var(--soft);
+  width: 100%; aspect-ratio: 1/1; max-height: 38vh; background: var(--soft);
   display: flex; align-items: center; justify-content: center;
   color: var(--dim); font-size: 14px; position: relative; overflow: hidden;
 }
@@ -77,7 +77,7 @@ body.in-tg .back-btn { display: none; }
 .photo-dots { display: flex; gap: 5px; justify-content: center; padding: 10px; }
 .photo-dot { width: 6px; height: 6px; border-radius: 999px; background: #d8d8d2; transition: .15s; }
 .photo-dot.active { background: #141416; }
-.profile-info { padding: 12px 18px 8px; }
+.profile-info { padding: 10px 18px 6px; }
 .profile-info h2 { font-size: 21px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 2px; }
 .profile-info .username { font-size: 13.5px; color: var(--dim); margin-bottom: 8px; }
 .profile-info .stats { display: flex; gap: 16px; font-size: 13px; color: var(--dim); margin-bottom: 8px; }
@@ -85,26 +85,27 @@ body.in-tg .back-btn { display: none; }
 .profile-info .stats strong { color: #141416; font-weight: 700; }
 
 /* ── оценка: тиры различаются шагом серого ── */
-.rate-section { padding: 0 18px 18px; }
+.rate-section { padding: 0 16px 16px; }
 .rate-title {
-  font-size: 10.5px; color: var(--dim); margin-bottom: 12px; font-weight: 700;
+  font-size: 10.5px; color: var(--dim); margin-bottom: 10px; font-weight: 700;
   text-align: center; text-transform: uppercase; letter-spacing: .14em;
 }
-/* пять тиров одной строкой — шкала от чёрного к белому */
-.rate-buttons { display: flex; gap: 6px; justify-content: center; }
+/* семь тиров по возрастанию — шкала от белого к чёрному */
+.rate-buttons { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
 .btn-rate {
-  flex: 1 1 0; min-width: 0;
-  padding: 12px 4px; border-radius: 999px; border: 1px solid transparent;
-  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  padding: 8px 12px; border-radius: 999px; border: 1px solid transparent;
+  font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer;
   transition: transform .12s, opacity .12s; text-transform: uppercase; letter-spacing: .02em;
 }
 .btn-rate:active { transform: scale(.92); }
 .btn-rate:hover { opacity: .88; }
-.btn-rate.chad  { background: #141416; color: #fff; }
-.btn-rate.htn   { background: #3d3d42; color: #fff; }
-.btn-rate.mtn   { background: #75757c; color: #fff; }
-.btn-rate.ltn   { background: #e2e2de; color: #141416; }
-.btn-rate.incel { background: #fff; color: var(--dim); border-color: var(--line); }
+.btn-rate.sub3     { background: #fff;     color: var(--dim); border-color: var(--line); }
+.btn-rate.sub5     { background: #ededea;  color: #57575d; }
+.btn-rate.ltn      { background: #d6d6d1;  color: #141416; }
+.btn-rate.mtn      { background: #a8a8ae;  color: #fff; }
+.btn-rate.htn      { background: #75757c;  color: #fff; }
+.btn-rate.chadlite { background: #3d3d42;  color: #fff; }
+.btn-rate.chad     { background: #141416;  color: #fff; }
 
 /* ── прочее ── */
 .toast {
@@ -141,6 +142,14 @@ body.in-tg .back-btn { display: none; }
 .switch.on::after { left: 22px; }
 .foot { text-align: center; color: var(--dim); font-size: 12px; padding-top: 22px; }
 
+/* на низких экранах ужимаем фото, чтобы оба ряда оценок остались над меню */
+@media (max-height: 700px) {
+  .profile-photo { max-height: 31vh; }
+  .profile-info { padding: 8px 18px 4px; }
+  .profile-info h2 { font-size: 19px; }
+  .profile-card { margin: 10px 16px; }
+}
+
 /* на узком экране подпись строки настроек уходит наверх, чипы — в один ряд */
 @media (max-width: 460px) {
   .setting-row { flex-direction: column; align-items: stretch; gap: 11px; }
@@ -151,12 +160,12 @@ body.in-tg .back-btn { display: none; }
 </head>
 <body>
 <div id="screenLoading" class="screen active">
-<div class="empty-state"><h3>MogMatch</h3><p>Загрузка...</p></div>
+<div class="empty-state"><h3>ДайМогнуть!</h3><p>Загрузка...</p></div>
 </div>
 <div id="screenMain" class="screen">
   <div class="header">
     <button class="back-btn" onclick="goSite()" aria-label="Назад в инструменты"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-    <div class="header-title">Mog<span class="dim">Match</span></div>
+    <div class="header-title">Дай<span class="dim">Могнуть!</span></div>
   </div>
   <div id="mainContent"><div class="empty-state"><h3>Никого нет</h3><p>Пока нет анкет для оценки</p></div></div>
 </div>
@@ -175,9 +184,9 @@ body.in-tg .back-btn { display: none; }
   <div id="settingsContent"></div>
 </div>
 <nav class="nav" id="navbar">
-<button class="nav-btn active" onclick="showScreen('screenMain')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>Оценка</button>
-<button class="nav-btn" onclick="showScreen('screenStats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>Статистика</button>
-<button class="nav-btn" onclick="showScreen('screenSettings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Настройки</button>
+<button class="nav-btn active" onclick="showScreen('screenMain')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3.5" width="13" height="15" rx="3" transform="rotate(6 13.5 11)"/><rect x="4" y="5.5" width="13" height="15" rx="3" transform="rotate(-6 10.5 13)"/><path d="m8.2 12.4 1.6 1.7 3.4-3.6"/></svg>Оценка</button>
+<button class="nav-btn" onclick="showScreen('screenStats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 10.5l3.5 3.5L20.5 5.5"/><polyline points="15.5 5.5 20.5 5.5 20.5 10.5"/><path d="M3.5 20.5h17"/></svg>Статистика</button>
+<button class="nav-btn" onclick="showScreen('screenSettings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="14.5" cy="8" r="2.6"/><circle cx="8.5" cy="16" r="2.6"/></svg>Настройки</button>
 </nav>
 <div id="toastContainer"></div>
 <script>
@@ -278,11 +287,13 @@ function renderCandidateCard(p) {
       <div class="rate-section">
         <div class="rate-title">Оценить</div>
         <div class="rate-buttons">
-          <button class="btn-rate chad" onclick="rate('chad')">Chad</button>
-          <button class="btn-rate htn" onclick="rate('htn')">HTN</button>
-          <button class="btn-rate mtn" onclick="rate('mtn')">MTN</button>
+          <button class="btn-rate sub3" onclick="rate('sub3')">Sub3</button>
+          <button class="btn-rate sub5" onclick="rate('sub5')">Sub5</button>
           <button class="btn-rate ltn" onclick="rate('ltn')">LTN</button>
-          <button class="btn-rate incel" onclick="rate('incel')">Incel</button>
+          <button class="btn-rate mtn" onclick="rate('mtn')">MTN</button>
+          <button class="btn-rate htn" onclick="rate('htn')">HTN</button>
+          <button class="btn-rate chadlite" onclick="rate('chadlite')">ChadLite</button>
+          <button class="btn-rate chad" onclick="rate('chad')">Chad</button>
         </div>
       </div>
     </div>`;
@@ -356,7 +367,7 @@ function loadSettings() {
           <button id="prefAny" class="setting-btn${!userProfile?.rating_preference || userProfile?.rating_preference === 'any' ? ' selected' : ''}" onclick="setPref('any')">Всех</button>
         </div>
       </div>
-      <div class="foot">MogMatch</div>
+      <div class="foot">ДайМогнуть!</div>
     </div>`;
 }
 
