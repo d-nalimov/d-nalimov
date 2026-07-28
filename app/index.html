@@ -158,6 +158,93 @@ body.need-auth .nav { display: none; }
 .auth-alt:hover { color: #141416; }
 
 /* recent ratings list */
+/* просмотр фото на весь экран */
+.lightbox {
+ position: fixed; inset: 0; z-index: 300; display: none;
+ align-items: center; justify-content: center; padding: 16px;
+ background: rgba(20,20,22,.94); opacity: 0; transition: opacity .22s ease;
+}
+.lightbox.open { display: flex; opacity: 1; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: 14px; object-fit: contain; }
+.lightbox-close {
+ position: absolute; top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px;
+ width: 40px; height: 40px; padding: 0; border-radius: 999px;
+ border: 1px solid rgba(20,20,22,.07); background: #fff; color: #141416;
+ display: flex; align-items: center; justify-content: center; cursor: pointer;
+ box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+.profile-photo img { cursor: zoom-in; }
+
+/* раскрывающиеся секции */
+.acc { margin: 0 16px 10px; }
+.acc-btn {
+ width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+ padding: 14px 18px; border-radius: 999px; border: 1px solid var(--line);
+ background: #fff; color: #141416; font-family: inherit;
+ font-size: 14px; font-weight: 700; cursor: pointer; transition: .15s;
+}
+.acc-btn:hover { border-color: #c4c4bd; }
+.acc-btn .chev { transition: transform .3s ease; flex-shrink: 0; }
+.acc-btn.open .chev { transform: rotate(180deg); }
+.acc-btn.blue { background: #5b9bd5; border-color: #5b9bd5; color: #fff; }
+.acc-btn.pink { background: #ff6b9d; border-color: #ff6b9d; color: #fff; }
+.acc-btn.blue:hover, .acc-btn.pink:hover { opacity: .9; }
+.acc-body { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .35s ease, opacity .25s ease; }
+.acc-body.open { opacity: 1; }
+.acc-inner { padding: 6px 2px 2px; }
+
+/* строка топа */
+.top-item { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--line); }
+.top-item:last-child { border-bottom: none; }
+.top-rank { width: 22px; flex-shrink: 0; font-size: 13px; font-weight: 800; color: var(--dim); text-align: center; }
+.top-avatar { width: 42px; height: 42px; border-radius: 999px; background: var(--soft); flex-shrink: 0; overflow: hidden; }
+.top-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.top-info { flex: 1; min-width: 0; }
+.top-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-sub { font-size: 11px; color: var(--dim); }
+.top-score { font-size: 13px; font-weight: 800; flex-shrink: 0; }
+
+/* редактирование анкеты */
+.edit-photos { display: flex; gap: 10px; }
+.edit-photo { flex: 1 1 0; min-width: 0; }
+.edit-photo-frame {
+ width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden;
+ background: var(--soft); border: 1px solid var(--line);
+ display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 12px;
+}
+.edit-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+.edit-photo-btn {
+ width: 100%; margin-top: 7px; padding: 8px 10px; border-radius: 999px;
+ border: 1px solid var(--line); background: #fff; color: #141416;
+ font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.edit-photo-btn:hover { border-color: #c4c4bd; }
+.edit-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.edit-row label { font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.edit-age {
+ flex: 1; min-width: 0; padding: 11px 16px; border-radius: 999px;
+ border: 1px solid var(--line); background: #fff; color: #141416;
+ font-family: inherit; font-size: 14px; font-weight: 600; outline: none;
+}
+.edit-age:focus { border-color: #141416; }
+.edit-save {
+ width: 100%; margin-top: 12px; padding: 13px; border-radius: 999px;
+ border: 1px solid #141416; background: #141416; color: #fff;
+ font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+}
+.edit-save:hover { opacity: .88; }
+.edit-save[disabled] { opacity: .5; cursor: default; }
+.edit-danger {
+ width: 100%; margin-top: 10px; padding: 12px; border-radius: 999px;
+ border: 1px solid var(--line); background: #fff; color: #c2453c;
+ font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.edit-danger:hover { border-color: #c2453c; }
+.edit-confirm { display: flex; gap: 8px; margin-top: 10px; }
+.edit-confirm button { flex: 1 1 0; padding: 12px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.edit-confirm .yes { border: 1px solid #c2453c; background: #c2453c; color: #fff; }
+.edit-confirm .no { border: 1px solid var(--line); background: #fff; color: #141416; }
+
 .rates-list { padding: 0 16px; }
 .rate-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .rate-item:last-child { border-bottom: none; }
@@ -242,6 +329,13 @@ body.need-auth .nav { display: none; }
 <button class="nav-btn" onclick="showScreen('screenStats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5 9 10.5l3.5 3.5L20.5 5.5"/><polyline points="15.5 5.5 20.5 5.5 20.5 10.5"/><path d="M3.5 20.5h17"/></svg>Статистика</button>
 <button class="nav-btn" onclick="showScreen('screenSettings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="14.5" cy="8" r="2.6"/><circle cx="8.5" cy="16" r="2.6"/></svg>Настройки</button>
 </nav>
+<div class="lightbox" id="lightbox" onclick="closePhoto()">
+  <button class="lightbox-close" onclick="closePhoto()" aria-label="Закрыть">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </button>
+  <img id="lightboxImg" alt="">
+</div>
+<input type="file" id="photoInput" accept="image/*" style="display:none">
 <div id="toastContainer"></div>
 <script>
 const API = '/wa/api';
@@ -253,6 +347,7 @@ let currentCandidate = null;
 let currentPhotoIdx = 0;
 let photoTimer = null;
 let touchStartX = 0;
+let suppressClick = false;   // чтобы свайп по фото не открывал его на весь экран
 
 const MALE_TIERS = [
   { key: 'sub3', label: 'Sub3', cls: 'sub3' },
@@ -325,11 +420,50 @@ function handleTouchEnd(e) {
  const dx = e.changedTouches[0].screenX - touchStartX;
  const photos = Array.isArray(currentCandidate.photos) ? currentCandidate.photos.filter(Boolean) : [];
  if (Math.abs(dx) > 50 && photos.length > 1) {
+ suppressClick = true;                 // свайп не должен открывать фото
+ setTimeout(() => { suppressClick = false; }, 400);
  stopPhotoSlideshow();
  if (dx < 0) navigatePhoto(1);
  else navigatePhoto(-1);
  startPhotoSlideshow();
  }
+}
+
+// ─── фото на весь экран ───────────────────────────────────────────
+function openPhoto(src) {
+ if (suppressClick || !src) return;
+ const box = document.getElementById('lightbox');
+ document.getElementById('lightboxImg').src = src;
+ box.classList.add('open');
+}
+
+function closePhoto() {
+ document.getElementById('lightbox').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePhoto(); });
+
+// ─── раскрывающиеся секции ────────────────────────────────────────
+function toggleAcc(btn, bodyId, loader) {
+ const body = document.getElementById(bodyId);
+ if (!body) return;
+ const open = btn.classList.toggle('open');
+ body.classList.toggle('open', open);
+ if (open) {
+ body.style.maxHeight = body.scrollHeight + 'px';
+ if (loader && !body.dataset.loaded) {
+ body.dataset.loaded = '1';
+ Promise.resolve(loader()).then(() => resizeAcc(bodyId));
+ }
+ } else {
+ body.style.maxHeight = '0px';
+ }
+}
+
+// содержимое приходит уже после раскрытия — подгоняем высоту
+function resizeAcc(bodyId) {
+ const body = document.getElementById(bodyId);
+ if (body && body.classList.contains('open')) body.style.maxHeight = body.scrollHeight + 'px';
 }
 
 function goSite() { location.href = '/tools/'; }
@@ -402,7 +536,7 @@ function renderCandidateCard(p) {
  c.innerHTML = `
  <div class="profile-card">
  <div class="profile-photo" id="ppContainer" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
- ${photos.length ? `<img id="ppImg" src="${API}/photo/${photos[0]}" alt="photo">` : '<span>Нет фото</span>'}
+ ${photos.length ? `<img id="ppImg" src="${API}/photo/${photos[0]}" alt="photo" onclick="openPhoto(this.src)">` : '<span>Нет фото</span>'}
  </div>
  ${photos.length > 1 ? `<div class="photo-dots" id="ppDots">${photos.map((_, i) => `<div class="photo-dot${i === 0 ? ' active' : ''}"></div>`).join('')}</div>` : ''}
  <div class="profile-info">
@@ -479,11 +613,29 @@ async function loadStats() {
  <button class="setting-btn${!p.rating_preference || p.rating_preference === 'any' ? ' selected' : ''}" onclick="setPref('any')">Всех</button>
  </div>
  </div>
- <div class="rate-section" style="margin-top:12px">
- <div class="rate-title">Последние оценки</div>
- <div id="recentRates" class="rates-list"><div class="empty-state" style="padding:20px"><p>Загрузка...</p></div></div>
+ <div style="margin-top:14px">
+ <div class="acc">
+ <button class="acc-btn" onclick="toggleAcc(this,'accRecent',loadRecentRates)">
+ Последние оценки
+ <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+ </button>
+ <div class="acc-body" id="accRecent"><div class="acc-inner"><div id="recentRates" class="rates-list"><div class="empty-state" style="padding:16px"><p>Загрузка...</p></div></div></div></div>
+ </div>
+ <div class="acc">
+ <button class="acc-btn blue" onclick="toggleAcc(this,'accTopMale',() => loadTop('male'))">
+ Топ парней
+ <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+ </button>
+ <div class="acc-body" id="accTopMale"><div class="acc-inner"><div id="topMale"><div class="empty-state" style="padding:16px"><p>Загрузка...</p></div></div></div></div>
+ </div>
+ <div class="acc">
+ <button class="acc-btn pink" onclick="toggleAcc(this,'accTopFemale',() => loadTop('female'))">
+ Топ девушек
+ <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+ </button>
+ <div class="acc-body" id="accTopFemale"><div class="acc-inner"><div id="topFemale"><div class="empty-state" style="padding:16px"><p>Загрузка...</p></div></div></div></div>
+ </div>
  </div>`;
- loadRecentRates();
  } else if (d._error) {
  c.innerHTML = '<div class="empty-state"><h3>Нет связи</h3><p>Не удалось загрузить статистику</p></div>';
  } else {
@@ -499,7 +651,11 @@ async function loadRecentRates() {
  el.innerHTML = '<div class="empty-state" style="padding:20px"><p>Пока нет оценок</p></div>';
  return;
  }
- el.innerHTML = d.rates.map(r => {
+ renderRates(el, d.rates);
+}
+
+function renderRates(el, rates) {
+ el.innerHTML = rates.map(r => {
  const date = new Date(r.created_at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
  const avatar = r.photo_front ? API + '/photo/' + r.photo_front : '';
  return `
@@ -510,6 +666,35 @@ async function loadRecentRates() {
  <div class="rate-item-date">${date}</div>
  </div>
  <div class="rate-item-tier ${r.tier}">${r.tier}</div>
+ </div>`;
+ }).join('');
+}
+
+// ─── топ по оценкам ───────────────────────────────────────────────
+async function loadTop(gender) {
+ const el = document.getElementById(gender === 'male' ? 'topMale' : 'topFemale');
+ if (!el) return;
+ const d = await apiPost('/top', { gender });
+ if (d._error || !d.top) {
+ el.innerHTML = '<div class="empty-state" style="padding:16px"><p>Не удалось загрузить топ</p></div>';
+ return;
+ }
+ if (!d.top.length) {
+ el.innerHTML = '<div class="empty-state" style="padding:16px"><p>Пока никого нет в топе</p></div>';
+ return;
+ }
+ el.innerHTML = d.top.map((p, i) => {
+ const avatar = p.photo_front ? API + '/photo/' + p.photo_front : '';
+ const score = p.score ? p.score.toFixed(1) : '—';
+ return `
+ <div class="top-item">
+ <div class="top-rank">${i + 1}</div>
+ <div class="top-avatar">${avatar ? `<img src="${avatar}" alt="" onclick="openPhoto(this.src)">` : ''}</div>
+ <div class="top-info">
+ <div class="top-name">${escapeHtml(p.display_name || p.username || 'Аноним')}${p.age ? ', ' + p.age : ''}</div>
+ <div class="top-sub">${p.ratings_count} оцен. · ${(p.tier || '').toUpperCase()}</div>
+ </div>
+ <div class="top-score">${score}</div>
  </div>`;
  }).join('');
 }
@@ -526,7 +711,144 @@ function loadSettings() {
  <button id="prefAny" class="setting-btn${!userProfile?.rating_preference || userProfile?.rating_preference === 'any' ? ' selected' : ''}" onclick="setPref('any')">Всех</button>
  </div>
  </div>
+ <div class="acc">
+ <button class="acc-btn" onclick="toggleAcc(this,'accEdit',renderEditForm)">
+ Редактировать анкету
+ <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+ </button>
+ <div class="acc-body" id="accEdit"><div class="acc-inner" id="editForm"></div></div>
+ </div>
  </div>`;
+}
+
+// ─── редактирование анкеты ────────────────────────────────────────
+function photoSlotHtml(slot, title) {
+ const fid = slot === 'front' ? userProfile?.photo_front : userProfile?.photo_side;
+ const src = fid ? API + '/photo/' + fid : '';
+ return `
+ <div class="edit-photo">
+ <div class="edit-photo-frame" id="prev-${slot}">
+ ${src ? `<img src="${src}" alt="" onclick="openPhoto(this.src)">` : 'Нет фото'}
+ </div>
+ <button class="edit-photo-btn" onclick="pickPhoto('${slot}')">${title}</button>
+ </div>`;
+}
+
+function renderEditForm() {
+ const el = document.getElementById('editForm');
+ if (!el) return;
+ el.innerHTML = `
+ <div class="edit-photos">
+ ${photoSlotHtml('front', 'Фото 1')}
+ ${photoSlotHtml('side', 'Фото 2')}
+ </div>
+ <div class="edit-row">
+ <label for="editAge">Возраст</label>
+ <input class="edit-age" id="editAge" type="number" inputmode="numeric" min="14" max="99" value="${userProfile?.age || ''}">
+ </div>
+ <button class="edit-save" id="editSave" onclick="saveProfile()">Сохранить</button>
+ <div id="deleteZone">
+ <button class="edit-danger" onclick="askDelete()">Удалить анкету</button>
+ </div>`;
+}
+
+let photoSlot = null;
+
+function pickPhoto(slot) {
+ photoSlot = slot;
+ const inp = document.getElementById('photoInput');
+ inp.value = '';
+ inp.click();
+}
+
+// ужимаем на клиенте: телефонные снимки по 5-10 МБ незачем гнать целиком
+function readAndResize(file, maxDim) {
+ return new Promise((resolve, reject) => {
+ const url = URL.createObjectURL(file);
+ const im = new Image();
+ im.onload = () => {
+ const k = Math.min(1, maxDim / Math.max(im.width, im.height));
+ const c = document.createElement('canvas');
+ c.width = Math.max(1, Math.round(im.width * k));
+ c.height = Math.max(1, Math.round(im.height * k));
+ c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+ URL.revokeObjectURL(url);
+ resolve(c.toDataURL('image/jpeg', 0.85));
+ };
+ im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+ im.src = url;
+ });
+}
+
+async function onPhotoPicked(e) {
+ const file = e.target.files && e.target.files[0];
+ if (!file || !photoSlot) return;
+ const slot = photoSlot;
+ showToast('Загружаем...');
+ let dataUrl;
+ try {
+ dataUrl = await readAndResize(file, 1280);
+ } catch (_) {
+ showToast('Не удалось открыть файл');
+ return;
+ }
+ const d = await apiPost('/update-photo', { slot, image: dataUrl });
+ if (!d.ok || !d.file_id) {
+ if (!d._auth) showToast('Ошибка загрузки');
+ return;
+ }
+ if (slot === 'front') userProfile.photo_front = d.file_id;
+ else userProfile.photo_side = d.file_id;
+ const frame = document.getElementById('prev-' + slot);
+ if (frame) frame.innerHTML = `<img src="${dataUrl}" alt="" onclick="openPhoto(this.src)">`;
+ showToast('Фото обновлено');
+}
+
+async function saveProfile() {
+ const input = document.getElementById('editAge');
+ const btn = document.getElementById('editSave');
+ const age = parseInt(input.value, 10);
+ if (!age || age < 14 || age > 99) { showToast('Возраст от 14 до 99'); return; }
+ btn.disabled = true;
+ const d = await apiPost('/update-profile', { age });
+ btn.disabled = false;
+ if (d.ok) {
+ userProfile.age = age;
+ showToast('Сохранено');
+ } else if (!d._auth) {
+ showToast('Не удалось сохранить');
+ }
+}
+
+function askDelete() {
+ const zone = document.getElementById('deleteZone');
+ if (!zone) return;
+ zone.innerHTML = `
+ <div class="edit-confirm">
+ <button class="yes" onclick="confirmDelete()">Точно удалить</button>
+ <button class="no" onclick="cancelDelete()">Отмена</button>
+ </div>`;
+ resizeAcc('accEdit');
+}
+
+function cancelDelete() {
+ const zone = document.getElementById('deleteZone');
+ if (zone) zone.innerHTML = '<button class="edit-danger" onclick="askDelete()">Удалить анкету</button>';
+ resizeAcc('accEdit');
+}
+
+async function confirmDelete() {
+ const d = await apiPost('/delete-profile');
+ if (!d.ok) {
+ if (!d._auth) showToast('Не удалось удалить');
+ return;
+ }
+ showToast('Анкета удалена');
+ setTimeout(() => {
+ const tg = window.Telegram?.WebApp;
+ if (tg?.close) tg.close();
+ else location.href = '/tools/';
+ }, 1200);
 }
 
 async function setPref(val) {
@@ -546,6 +868,8 @@ function escapeHtml(t) {
  d.textContent = t;
  return d.innerHTML;
 }
+
+document.getElementById('photoInput').addEventListener('change', onPhotoPicked);
 
 init();
 </script>
