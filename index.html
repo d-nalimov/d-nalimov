@@ -6032,7 +6032,7 @@ function showPage(name, pushState) {
   };
   if (titles[name]) document.title = titles[name];
   // На белых страницах подписи в навбаре должны быть тёмными
-  document.body.classList.toggle('light-page', name === 'tools' || name === 'tracker' || name === 'hairfeed' || name === 'morpher');
+  document.body.classList.toggle('light-page', name === 'tools' || name === 'tracker' || name === 'hairfeed' || name === 'morpher' || name === 'feed' || name === 'article' || name === 'create');
   if (typeof window.mpPageShown === 'function') window.mpPageShown(name === 'morpher');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (name === 'pricing') { setTimeout(dirSliderInit, 50); }
@@ -12478,6 +12478,20 @@ hfRender();
     </div>
   </div>
 
+  <!-- Ссылка на исследование -->
+  <div class="cr-field-wrap">
+    <label class="cr-label">Ссылка на исследование</label>
+    <input
+      type="url"
+      id="crSource"
+      class="cr-title-input cr-source-input"
+      placeholder="https://pubmed.ncbi.nlm.nih.gov/..."
+      autocomplete="off"
+      oninput="crCheckSource()"
+    />
+    <div class="cr-source-note" id="crSourceNote">PubMed, PMC, Nature, Lancet, JAMA, BMJ, ScienceDirect, Springer, Wiley, PLOS, MDPI, Frontiers, Cochrane, arXiv, bioRxiv, КиберЛенинка и другие научные источники</div>
+  </div>
+
   <!-- Тулбар -->
   <div class="cr-toolbar" id="crToolbar">
     <button class="cr-tb" onclick="crFmt('bold')" title="Жирный"><b>Ж</b></button>
@@ -12485,8 +12499,13 @@ hfRender();
     <button class="cr-tb" onclick="crFmt('underline')" title="Подчеркнуть"><u>П</u></button>
     <button class="cr-tb" onclick="crFmt('strikeThrough')" title="Зачеркнуть"><s>З</s></button>
     <div class="cr-tb-sep"></div>
-    <button class="cr-tb" onclick="crFmtBlock('H2')" title="Заголовок">H2</button>
-    <button class="cr-tb" onclick="crFmtBlock('H3')" title="Подзаголовок">H3</button>
+    <button class="cr-tb" onclick="crFmtBlock('H1')" title="Заголовок 1">H1</button>
+    <button class="cr-tb" onclick="crFmtBlock('H2')" title="Заголовок 2">H2</button>
+    <button class="cr-tb" onclick="crFmtBlock('H3')" title="Заголовок 3">H3</button>
+    <div class="cr-tb-sep"></div>
+    <button class="cr-tb" onclick="crInsertImage()" title="Картинка в текст">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </button>
     <div class="cr-tb-sep"></div>
     <button class="cr-tb" onclick="crFmtBlock('blockquote')" title="Цитата">❝</button>
     <button class="cr-tb" onclick="crFmtList('insertUnorderedList')" title="Список">≡</button>
@@ -14653,6 +14672,67 @@ function crInsertLink() {
   if (url) { document.getElementById('crEditor').focus(); document.execCommand('createLink', false, url); }
 }
 
+// ── картинка посреди текста ──
+// Файл кладём в общий список вложений, а в тексте оставляем метку; при
+// публикации метка превращается в [[img:N]] — санитайзер сервера её не трогает.
+var _crImgInput = null;
+function crInsertImage() {
+  if (!_crImgInput) {
+    _crImgInput = document.createElement('input');
+    _crImgInput.type = 'file';
+    _crImgInput.accept = 'image/*';
+    _crImgInput.style.display = 'none';
+    _crImgInput.addEventListener('change', function() {
+      var f = this.files && this.files[0];
+      this.value = '';
+      if (!f) return;
+      if (_crMediaFiles.length >= 5) { crShowStatus('⚠ Не больше 5 файлов на статью', '#c2453c'); return; }
+      _crMediaFiles.push(f);
+      var idx = _crMediaFiles.length - 1;
+      var ed = document.getElementById('crEditor');
+      ed.focus();
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      img.className = 'cr-inline-img';
+      img.setAttribute('data-cr-media', String(idx));
+      var sel = window.getSelection();
+      if (sel && sel.rangeCount && ed.contains(sel.anchorNode)) {
+        var r = sel.getRangeAt(0);
+        r.deleteContents();
+        r.insertNode(img);
+        r.setStartAfter(img); r.collapse(true);
+        sel.removeAllRanges(); sel.addRange(r);
+      } else {
+        ed.appendChild(img);
+      }
+      ed.appendChild(document.createElement('br'));
+      crOnInput();
+    });
+    document.body.appendChild(_crImgInput);
+  }
+  _crImgInput.click();
+}
+
+// ── ссылка на исследование ──
+function crCheckSource() {
+  var inp = document.getElementById('crSource');
+  var note = document.getElementById('crSourceNote');
+  var v = (inp.value || '').trim();
+  inp.classList.remove('bad', 'good');
+  if (!v) { note.className = 'cr-source-note'; note.textContent = 'PubMed, PMC, Nature, Lancet, JAMA, BMJ, ScienceDirect, Springer, Wiley, PLOS, MDPI, Frontiers, Cochrane, arXiv, bioRxiv, КиберЛенинка и другие научные источники'; return true; }
+  var host = typeof pnSrcHost === 'function' ? pnSrcHost(v) : null;
+  if (host) {
+    inp.classList.add('good');
+    note.className = 'cr-source-note ok';
+    note.textContent = 'Источник принят: ' + host;
+    return true;
+  }
+  inp.classList.add('bad');
+  note.className = 'cr-source-note err';
+  note.textContent = 'Домен не входит в список научных источников';
+  return false;
+}
+
 function crOnInput() {
   var el = document.getElementById('crEditor');
   var txt = el.innerText || '';
@@ -14850,19 +14930,41 @@ function crPublish() {
   var editor = document.getElementById('crEditor');
   var titleVal = (document.getElementById('crTitle').value || '').trim();
   var plainText = (editor.innerText || '').trim();
-  var bodyHtml  = editor.innerHTML || '';
 
-  // Название — h1 зелёный жирный
-  var titleHtml = titleVal
-    ? '<h1 style="color:#DAAE7E;font-weight:800;margin:0 0 10px;font-family:\'Manrope\',sans-serif;font-size:20px;line-height:1.2;">' + titleVal + '</h1>'
-    : '';
+  // Ссылка на исследование: пускаем только научные домены
+  var srcInput = document.getElementById('crSource');
+  var srcVal = srcInput ? (srcInput.value || '').trim() : '';
+  if (srcVal && !crCheckSource()) {
+    crShowStatus('⚠ Ссылка не из списка научных источников', '#c2453c');
+    if (srcInput) srcInput.focus();
+    return;
+  }
 
-  // text = то что сервер сохраняет и возвращает — всегда html
-  var text = titleHtml + bodyHtml;
-  var html = text; // одно и то же
+  // Вставленные в текст картинки → [[img:N]]; N назначаем по порядку появления
+  var clone = editor.cloneNode(true);
+  var ordered = [];
+  Array.prototype.slice.call(clone.querySelectorAll('img[data-cr-media]')).forEach(function(img) {
+    var f = _crMediaFiles[Number(img.getAttribute('data-cr-media'))];
+    if (!f) { img.parentNode.removeChild(img); return; }
+    var pos = ordered.indexOf(f);
+    if (pos === -1) { ordered.push(f); pos = ordered.length - 1; }
+    img.parentNode.replaceChild(document.createTextNode('[[img:' + pos + ']]'), img);
+  });
+  _crMediaFiles.forEach(function(f) { if (ordered.indexOf(f) === -1) ordered.push(f); });
 
-  if (!titleVal && !plainText && _crMediaFiles.length === 0) {
+  var bodyHtml = clone.innerHTML || '';
+  var titleHtml = titleVal ? '<h1>' + titleVal + '</h1>' : '';
+  var srcHtml = srcVal ? '[[src:' + srcVal + ']]' : '';
+
+  var text = srcHtml + titleHtml + bodyHtml;
+  var html = text;
+
+  if (!titleVal && !plainText && ordered.length === 0) {
     crShowStatus('⚠ Напиши что-нибудь или добавь медиа', '#FFB84E');
+    return;
+  }
+  if (ordered.length > 5) {
+    crShowStatus('⚠ Не больше 5 файлов на статью', '#c2453c');
     return;
   }
 
@@ -14880,7 +14982,7 @@ function crPublish() {
       var pinBtn = document.querySelector('.cr-pin-time-btn.active');
       if (pinBtn) fd.append('pin_hours', pinBtn.dataset.hours);
     }
-    _crMediaFiles.forEach(function(f) { fd.append('media', f); });
+    ordered.forEach(function(f) { fd.append('media', f); });
     // Опрос
     var pollData = crGetPollData();
     if (pollData) fd.append('poll', JSON.stringify(pollData));
@@ -17714,6 +17816,381 @@ function pikCallsDelete(id) {
 }
 </script>
 
+
+<!-- ═══ Лента исследований: плитка в стиле Pinterest + страница статьи ═══ -->
+<div class="page" id="page-article">
+  <div class="ar-wrap">
+    <div class="ar-head">
+      <button class="pt-back" onclick="pnBack()" aria-label="Назад в ленту">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <span class="ar-topic" id="arTopic"></span>
+    </div>
+    <article id="arBody"></article>
+  </div>
+</div>
+
+<style>
+/* ─── плитка ленты ─── */
+#page-feed.pn-on { background:#fff; color:#141416; }
+#page-feed.pn-on .w { max-width:1180px; }
+.pn-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+.pn-title { font-size:22px; font-weight:800; letter-spacing:-.02em; color:#141416; margin:0; flex:1 1 auto; min-width:0; }
+.pn-new {
+  display:inline-flex; align-items:center; gap:7px; border:1px solid #141416; background:#141416; color:#fff;
+  font-family:inherit; font-size:13px; font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer;
+}
+.pn-new:hover { opacity:.88; }
+.pn-grid { columns:4 230px; column-gap:16px; }
+.pn-card {
+  break-inside:avoid; margin:0 0 16px; width:100%; padding:0; text-align:left; cursor:pointer;
+  background:none; border:none; font-family:inherit; display:block;
+}
+.pn-thumb {
+  width:100%; border-radius:18px; overflow:hidden; background:#f2f2ee;
+  border:1px solid #e6e6e2; transition:transform .18s ease, box-shadow .18s ease;
+}
+.pn-card:hover .pn-thumb { transform:translateY(-3px); box-shadow:0 12px 30px rgba(20,20,22,.12); }
+.pn-thumb img { width:100%; display:block; object-fit:cover; }
+.pn-thumb.pn-text { padding:22px 18px; display:flex; align-items:center; min-height:150px; }
+.pn-thumb.pn-text span {
+  font-size:15px; font-weight:700; line-height:1.35; color:#141416; letter-spacing:-.01em;
+  display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pn-meta { padding:9px 4px 0; }
+.pn-card-title {
+  font-size:13.5px; font-weight:700; line-height:1.35; color:#141416; letter-spacing:-.01em;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pn-card-sub { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11.5px; color:#8a8a90; }
+.pn-ava { width:18px; height:18px; border-radius:999px; object-fit:cover; background:#e6e6e2; flex-shrink:0; }
+.pn-src {
+  display:inline-flex; align-items:center; gap:4px; margin-top:7px;
+  font-size:10.5px; font-weight:700; color:#141416; background:#f2f2ee;
+  border-radius:999px; padding:3px 9px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.pn-empty { text-align:center; color:#8a8a90; padding:70px 20px; font-size:14px; column-span:all; }
+.pn-empty b { display:block; color:#141416; font-size:17px; margin-bottom:6px; }
+.pn-more { display:block; margin:6px auto 40px; border:1px solid #e6e6e2; background:#fff; color:#141416;
+  font-family:inherit; font-size:13px; font-weight:600; padding:11px 24px; border-radius:999px; cursor:pointer; }
+.pn-more:hover { border-color:#141416; }
+
+/* ─── страница статьи ─── */
+#page-article { background:#fff; color:#141416; }
+.ar-wrap { max-width:680px; margin:0 auto; padding:22px 20px 120px; }
+.ar-head { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.ar-topic { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a90; }
+.ar-cover { width:100%; border-radius:22px; margin-bottom:20px; display:block; border:1px solid #e6e6e2; }
+.ar-byline { display:flex; align-items:center; gap:9px; margin:0 0 18px; font-size:12.5px; color:#8a8a90; }
+.ar-byline img { width:26px; height:26px; border-radius:999px; object-fit:cover; background:#e6e6e2; }
+.ar-byline b { color:#141416; font-weight:700; }
+.ar-source {
+  display:flex; align-items:center; gap:10px; margin:0 0 22px; padding:13px 16px;
+  border:1px solid #e6e6e2; border-radius:16px; background:#fafaf8; text-decoration:none; color:#141416;
+}
+.ar-source:hover { border-color:#141416; }
+.ar-source, .ar-source * { text-decoration:none !important; }
+.ar-source-l { flex:1; min-width:0; }
+.ar-source-k { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a90; }
+.ar-source-v { font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#arBody { font-size:16px; line-height:1.68; color:#141416; }
+#arBody h1 { font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1.2; margin:0 0 14px; }
+#arBody h2 { font-size:21px; font-weight:800; letter-spacing:-.02em; line-height:1.25; margin:30px 0 10px; }
+#arBody h3 { font-size:17px; font-weight:800; letter-spacing:-.01em; line-height:1.3; margin:24px 0 8px; }
+#arBody p { margin:0 0 16px; }
+#arBody ul, #arBody ol { margin:0 0 16px; padding-left:22px; }
+#arBody li { margin-bottom:6px; }
+#arBody blockquote { margin:0 0 16px; padding:12px 18px; border-left:3px solid #141416; background:#fafaf8; border-radius:0 12px 12px 0; color:#57575d; }
+#arBody a { color:#141416; text-decoration:underline; text-underline-offset:2px; }
+#arBody b, #arBody strong { font-weight:800; }
+#arBody figure { margin:22px 0; }
+#arBody figure img { width:100%; border-radius:18px; display:block; border:1px solid #e6e6e2; }
+#arBody video { width:100%; border-radius:18px; display:block; }
+.ar-actions { display:flex; align-items:center; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid #e6e6e2; }
+.ar-act {
+  display:inline-flex; align-items:center; gap:7px; border:1px solid #e6e6e2; background:#fff; color:#141416;
+  font-family:inherit; font-size:13px; font-weight:600; padding:9px 16px; border-radius:999px; cursor:pointer;
+}
+.ar-act:hover { border-color:#141416; }
+.ar-act.on { background:#141416; color:#fff; border-color:#141416; }
+
+/* ─── редактор в ч/б ─── */
+#page-create { background:#fff; color:#141416; }
+#page-create .cr-eyebrow { color:#8a8a90; letter-spacing:.22em; opacity:1; }
+#page-create .cr-title { font-family:inherit; font-size:24px; font-weight:900; letter-spacing:-.03em; color:#141416; text-shadow:none; }
+#page-create .cr-label { color:#8a8a90; font-weight:700; }
+#page-create .cr-title-input, #page-create .cr-editor {
+  background:#fff; border:1px solid #e6e6e2; color:#141416; border-radius:16px;
+}
+#page-create .cr-title-input:focus, #page-create .cr-editor:focus { border-color:#141416; box-shadow:none; outline:none; }
+#page-create .cr-editor { min-height:260px; padding:16px 18px; line-height:1.65; font-size:15.5px; }
+#page-create .cr-editor:empty:before { color:#b4b4b0; }
+#page-create .cr-editor h1 { font-size:24px; font-weight:800; letter-spacing:-.02em; margin:18px 0 8px; }
+#page-create .cr-editor h2 { font-size:20px; font-weight:800; letter-spacing:-.02em; margin:16px 0 8px; }
+#page-create .cr-editor h3 { font-size:17px; font-weight:800; margin:14px 0 6px; }
+#page-create .cr-editor blockquote { border-left:3px solid #141416; background:#fafaf8; padding:10px 14px; margin:12px 0; border-radius:0 12px 12px 0; color:#57575d; }
+#page-create .cr-editor a { color:#141416; text-decoration:underline; }
+.cr-inline-img { max-width:100%; border-radius:14px; display:block; margin:12px 0; border:1px solid #e6e6e2; }
+#page-create .cr-toolbar { background:#fafaf8; border:1px solid #e6e6e2; border-radius:999px; padding:6px; gap:2px; }
+#page-create .cr-tb {
+  background:none; border:none; color:#141416; border-radius:999px;
+  min-width:34px; height:34px; font-size:12.5px; font-weight:700; cursor:pointer;
+}
+#page-create .cr-tb:hover { background:#ececE7; }
+#page-create .cr-tb-sep { background:#e0e0da; }
+#page-create .cr-topic {
+  background:#fff; border:1px solid #e6e6e2; color:#141416; border-radius:999px;
+  font-size:12.5px; font-weight:600; padding:7px 14px;
+}
+#page-create .cr-topic.active { background:#141416; color:#fff; border-color:#141416; }
+#page-create .cr-media-btn {
+  background:#fff; border:1px solid #e6e6e2; color:#141416; border-radius:999px; font-weight:600;
+}
+#page-create .cr-media-btn:hover { border-color:#141416; }
+#page-create .cr-char-count { color:#8a8a90; }
+#page-create .cr-publish-btn {
+  background:#141416; border:1px solid #141416; color:#fff; border-radius:999px; font-weight:700; box-shadow:none;
+}
+#page-create .cr-publish-btn:hover { opacity:.88; }
+#page-create .cr-preview-item img, #page-create .cr-preview-item video { border-radius:14px; }
+.cr-source-input.good { border-color:#141416 !important; }
+.cr-source-input.bad { border-color:#c2453c !important; }
+.cr-source-note { margin-top:7px; font-size:11.5px; line-height:1.45; color:#8a8a90; }
+.cr-source-note.ok { color:#141416; font-weight:600; }
+.cr-source-note.err { color:#c2453c; font-weight:600; }
+
+@media (max-width:520px) {
+  .pn-grid { columns:2 140px; column-gap:12px; }
+  .pn-card { margin-bottom:12px; }
+  .pn-head { gap:10px; }
+  .pn-title { font-size:19px; }
+  .pn-new { padding:9px 14px; font-size:12.5px; }
+  .ar-wrap { padding:18px 16px 120px; }
+  #arBody { font-size:15.5px; }
+}
+</style>
+
+<script>
+/* ─── Лента исследований: плитка + чтение статьи ────────────────────
+   Данные берём из существующего /api/feed. Заголовок статьи — первый
+   <h1> в тексте, обложка — первое фото поста. Ссылка на исследование и
+   картинки внутри текста хранятся плейсхолдерами [[src:…]] и [[img:N]]:
+   санитайзер на сервере пропускает их как обычный текст, поэтому схема
+   базы не меняется. */
+(function(){
+  var CACHE = {};        // id → пост, чтобы открыть статью без лишнего запроса
+  var before = null;
+  var busy = false;
+
+  // ── допустимые источники ──
+  var SRC_HOSTS = [
+    'pubmed.ncbi.nlm.nih.gov','ncbi.nlm.nih.gov','pmc.ncbi.nlm.nih.gov','nih.gov',
+    'cyberleninka.ru','elibrary.ru',
+    'nature.com','science.org','cell.com','thelancet.com','nejm.org','jamanetwork.com',
+    'bmj.com','sciencedirect.com','springer.com','link.springer.com','onlinelibrary.wiley.com',
+    'academic.oup.com','tandfonline.com','frontiersin.org','mdpi.com','journals.plos.org','plos.org',
+    'cochranelibrary.com','arxiv.org','biorxiv.org','medrxiv.org','semanticscholar.org',
+    'scholar.google.com','jstor.org','researchgate.net'
+  ];
+  function srcHost(url) {
+    try {
+      var u = new URL(String(url).trim());
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+      var h = u.hostname.replace(/^www\./, '').toLowerCase();
+      for (var i = 0; i < SRC_HOSTS.length; i++) {
+        if (h === SRC_HOSTS[i] || h.endsWith('.' + SRC_HOSTS[i])) return h;
+      }
+      return null;
+    } catch (e) { return null; }
+  }
+  window.pnSrcHost = srcHost;
+  window.pnSrcHosts = SRC_HOSTS;
+
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+
+  // ── разбор поста ──
+  function parsePost(p) {
+    var raw = String(p.text || '');
+    var src = null;
+    raw = raw.replace(/\[\[src:([^\]]+)\]\]/, function(_, u) { src = u.trim(); return ''; });
+    var box = document.createElement('div');
+    box.innerHTML = raw;
+    var h1 = box.querySelector('h1');
+    var title = h1 ? (h1.textContent || '').trim() : '';
+    if (h1) h1.remove();
+    var plain = (box.textContent || '').replace(/\[\[img:\d+\]\]/g, '').trim();
+    var media = Array.isArray(p.media) ? p.media : [];
+    var cover = null;
+    for (var i = 0; i < media.length; i++) {
+      if (media[i] && media[i].type !== 'video') { cover = media[i].url; break; }
+    }
+    return { title: title, body: box.innerHTML, plain: plain, cover: cover, media: media, src: src };
+  }
+
+  // ── карточка плитки ──
+  function card(p) {
+    var a = parsePost(p);
+    CACHE[p.id] = p;
+    var host = a.src ? srcHost(a.src) : null;
+    var thumb = a.cover
+      ? '<div class="pn-thumb"><img src="' + esc(a.cover) + '" alt="" loading="lazy"></div>'
+      : '<div class="pn-thumb pn-text"><span>' + esc(a.title || a.plain.slice(0, 160) || 'Без названия') + '</span></div>';
+    var title = a.title || a.plain.slice(0, 90);
+    return '<button class="pn-card" onclick="pnOpen(' + Number(p.id) + ')">' +
+      thumb +
+      '<div class="pn-meta">' +
+        (a.cover && title ? '<div class="pn-card-title">' + esc(title) + '</div>' : '') +
+        '<div class="pn-card-sub">' +
+          (p.avatar_url ? '<img class="pn-ava" src="' + esc(p.avatar_url) + '" alt="">' : '<span class="pn-ava"></span>') +
+          '<span>' + esc(p.username || '') + '</span>' +
+        '</div>' +
+        (host ? '<span class="pn-src">' + esc(host) + '</span>' : '') +
+      '</div>' +
+    '</button>';
+  }
+
+  // ── загрузка ленты ──
+  function load(reset) {
+    var grid = document.getElementById('pnGrid');
+    if (!grid) return;
+    if (busy) return;
+    busy = true;
+    if (reset) { before = null; grid.innerHTML = '<div class="pn-empty">Загружаем…</div>'; }
+    var topic = (typeof snSelectedTopic !== 'undefined' && snSelectedTopic) ? snSelectedTopic : '';
+    var url = '/api/feed?limit=24' + (before ? '&before=' + encodeURIComponent(before) : '') + (topic ? '&topic=' + encodeURIComponent(topic) : '');
+    fetch(url, { credentials: 'include' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d) {
+        var posts = d.posts || [];
+        if (reset) grid.innerHTML = '';
+        if (!posts.length && reset) {
+          grid.innerHTML = '<div class="pn-empty"><b>Пока пусто</b>Опубликуйте первое исследование</div>';
+        }
+        var html = '';
+        posts.forEach(function(p) { html += card(p); });
+        grid.insertAdjacentHTML('beforeend', html);
+        var more = document.getElementById('pnMore');
+        if (posts.length >= 24) {
+          before = posts[posts.length - 1].created_at;
+          if (more) more.style.display = 'block';
+        } else if (more) more.style.display = 'none';
+      })
+      .catch(function() {
+        if (reset) grid.innerHTML = '<div class="pn-empty"><b>Лента недоступна</b>Проверьте соединение</div>';
+      })
+      .then(function() { busy = false; });
+  }
+
+  // ── страница статьи ──
+  function open(id) {
+    var p = CACHE[id];
+    if (!p) { showPage('feed'); return; }
+    var a = parsePost(p);
+    var host = a.src ? srcHost(a.src) : null;
+
+    // [[img:N]] → картинка из вложений поста
+    var body = a.body.replace(/\[\[img:(\d+)\]\]/g, function(_, n) {
+      var m = a.media[Number(n)];
+      if (!m) return '';
+      if (m.type === 'video') return '<figure><video src="' + esc(m.url) + '" controls playsinline></video></figure>';
+      return '<figure><img src="' + esc(m.url) + '" alt="" loading="lazy"></figure>';
+    });
+
+    var date = '';
+    try { date = new Date(p.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); } catch (e) {}
+
+    document.getElementById('arTopic').textContent = p.topic || '';
+    document.getElementById('arBody').innerHTML =
+      (a.cover ? '<img class="ar-cover" src="' + esc(a.cover) + '" alt="">' : '') +
+      '<h1>' + esc(a.title || 'Без названия') + '</h1>' +
+      '<div class="ar-byline">' +
+        (p.avatar_url ? '<img src="' + esc(p.avatar_url) + '" alt="">' : '<img alt="">') +
+        '<span><b>' + esc(p.username || '') + '</b>' + (date ? ' · ' + esc(date) : '') + '</span>' +
+      '</div>' +
+      (host ? '<a class="ar-source" href="' + esc(a.src) + '" target="_blank" rel="noopener noreferrer nofollow">' +
+        '<div class="ar-source-l"><div class="ar-source-k">Исследование</div><div class="ar-source-v">' + esc(host) + '</div></div>' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><polyline points="8 7 17 7 17 16"/></svg>' +
+      '</a>' : '') +
+      body +
+      '<div class="ar-actions">' +
+        '<button class="ar-act' + (p.my_like ? ' on' : '') + '" id="arLike" onclick="pnLike(' + Number(p.id) + ')">' +
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5 4.2 12.7a4.6 4.6 0 0 1 6.5-6.5l1.3 1.3 1.3-1.3a4.6 4.6 0 1 1 6.5 6.5z"/></svg>' +
+          '<span id="arLikeN">' + Number(p.likes_count || 0) + '</span>' +
+        '</button>' +
+        '<span style="font-size:12.5px;color:#8a8a90">' + Number(p.views_count || 0) + ' просмотров</span>' +
+      '</div>';
+    showPage('article');
+  }
+
+  function like(id) {
+    var p = CACHE[id]; if (!p) return;
+    if (typeof snRequireAuth === 'function' && !snRequireAuth()) return;
+    if (typeof pikApi !== 'function') return;
+    pikApi('POST', '/api/posts/' + id + '/like').then(function(d) {
+      p.my_like = d.liked ? 1 : 0;
+      if (typeof d.likes_count === 'number') p.likes_count = d.likes_count;
+      else p.likes_count = Math.max(0, Number(p.likes_count || 0) + (d.liked ? 1 : -1));
+      var btn = document.getElementById('arLike');
+      if (btn) btn.classList.toggle('on', !!d.liked);
+      var n = document.getElementById('arLikeN');
+      if (n) n.textContent = p.likes_count;
+    }).catch(function(){});
+  }
+
+  window.pnOpen = open;
+  window.pnLike = like;
+  window.pnLoad = load;
+  window.pnBack = function(){ showPage('feed'); };
+
+  // ── подмена ленты на плитку ──
+  function mount() {
+    var page = document.getElementById('page-feed');
+    var list = document.getElementById('snFeedList');
+    if (!page || !list || document.getElementById('pnGrid')) return;
+
+    page.classList.add('pn-on');
+    list.style.display = 'none';
+    var oldMore = document.getElementById('snLoadMoreBtn');
+    if (oldMore) oldMore.style.display = 'none';
+
+    var head = document.createElement('div');
+    head.className = 'pn-head';
+    head.innerHTML = '<h1 class="pn-title">Исследования</h1>' +
+      '<button class="pn-new" onclick="bnSetActive(document.getElementById(\'nav-create\'),\'create\');showPage(\'create\')">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+      'Опубликовать</button>';
+    var grid = document.createElement('div');
+    grid.className = 'pn-grid'; grid.id = 'pnGrid';
+    var more = document.createElement('button');
+    more.className = 'pn-more'; more.id = 'pnMore'; more.textContent = 'Показать ещё';
+    more.style.display = 'none';
+    more.onclick = function(){ load(false); };
+
+    list.parentNode.insertBefore(head, list);
+    list.parentNode.insertBefore(grid, list);
+    list.parentNode.insertBefore(more, list.nextSibling);
+
+    // маршрут страницы статьи
+    if (typeof pages === 'object' && pages && !pages.article) {
+      pages.article = { page: 'page-article', nav: 'nav-feed', url: '/article/' };
+      if (typeof urlMap === 'object' && urlMap) urlMap['/article/'] = 'article';
+    }
+
+    // старую ленту подменяем: те же вызовы теперь наполняют плитку
+    window.snLoadFeed = function(reset) { load(reset !== false); };
+
+    // статья живёт в памяти ленты, поэтому прямой заход на /article/ ведём в ленту
+    if (location.pathname === '/article/' || location.pathname === '/article') {
+      history.replaceState({ page: 'feed' }, '', '/feed/');
+      showPage('feed', false);
+    }
+    load(true);
+  }
+
+  if (document.readyState !== 'loading') mount();
+  else document.addEventListener('DOMContentLoaded', mount, { once: true });
+})();
+</script>
 
 <script>
 /* REF-MATCH: класс on-home на body — показываем верхний бар и прячем док только на главной */
