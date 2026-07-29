@@ -17972,6 +17972,31 @@ function pikCallsDelete(id) {
 }
 .ar-act:hover { border-color:#141416; }
 .ar-act.on { background:#141416; color:#fff; border-color:#141416; }
+.pn-dot { color:#c4c4bd; }
+
+/* комментарии под статьёй */
+.ar-comments { margin-top:26px; padding-top:20px; border-top:1px solid #e6e6e2; }
+.ar-c-head { font-size:15px; font-weight:800; letter-spacing:-.02em; margin-bottom:14px; }
+.ar-c-head span { color:#8a8a90; font-weight:700; }
+.ar-c-form { display:flex; gap:8px; align-items:flex-end; margin-bottom:18px; }
+.ar-c-form textarea {
+  flex:1; min-width:0; resize:none; font-family:inherit; font-size:14px; line-height:1.5;
+  padding:11px 16px; border:1px solid #e6e6e2; border-radius:18px; background:#fff; color:#141416; outline:none;
+}
+.ar-c-form textarea:focus { border-color:#141416; }
+.ar-c-send {
+  flex-shrink:0; border:1px solid #141416; background:#141416; color:#fff; font-family:inherit;
+  font-size:13px; font-weight:700; padding:11px 18px; border-radius:999px; cursor:pointer;
+}
+.ar-c-send:hover { opacity:.88; }
+.ar-c-list { display:flex; flex-direction:column; gap:14px; }
+.ar-c-item { display:flex; gap:10px; }
+.ar-c-ava { width:32px; height:32px; border-radius:999px; object-fit:cover; background:#e6e6e2; flex-shrink:0; }
+.ar-c-body { flex:1; min-width:0; }
+.ar-c-name { font-size:13px; font-weight:700; margin-bottom:2px; }
+.ar-c-name span { color:#8a8a90; font-weight:600; font-size:11.5px; margin-left:6px; }
+.ar-c-text { font-size:14px; line-height:1.55; color:#141416; word-break:break-word; }
+.ar-c-empty { color:#8a8a90; font-size:13.5px; padding:6px 0; }
 
 /* ─── редактор в ч/б ─── */
 #page-create { background:#fff; color:#141416; }
@@ -18099,6 +18124,15 @@ function pikCallsDelete(id) {
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 
+  // /api/feed отдаёт автора вложенным объектом и короткие имена счётчиков,
+  // а /api/posts/:username — плоские поля. Приводим к одному виду.
+  function who(p) {
+    var u = p.user || p;
+    return { name: u.username || '', avatar: u.avatar_url || '' };
+  }
+  function num(p, a, b) { var v = p[a]; if (v === undefined || v === null) v = p[b]; return Number(v || 0); }
+  function liked(p) { return !!(p.liked !== undefined ? p.liked : p.my_like); }
+
   // ── разбор поста ──
   function parsePost(p) {
     var raw = String(p.text || '');
@@ -18131,13 +18165,16 @@ function pikCallsDelete(id) {
       ? '<div class="pn-thumb"><img src="' + esc(a.cover) + '" alt="" loading="lazy"></div>'
       : '<div class="pn-thumb pn-text"><span>' + esc(a.title || a.plain.slice(0, 160) || 'Без названия') + '</span></div>';
     var title = a.title || a.plain.slice(0, 90);
+    var au = who(p);
     return '<button class="pn-card" onclick="pnOpen(' + Number(p.id) + ')">' +
       thumb +
       '<div class="pn-meta">' +
         (a.cover && title ? '<div class="pn-card-title">' + esc(title) + '</div>' : '') +
         '<div class="pn-card-sub">' +
-          (p.avatar_url ? '<img class="pn-ava" src="' + esc(p.avatar_url) + '" alt="">' : '<span class="pn-ava"></span>') +
-          '<span>' + esc(p.username || '') + '</span>' +
+          (au.avatar ? '<img class="pn-ava" src="' + esc(au.avatar) + '" alt="">' : '<span class="pn-ava"></span>') +
+          '<span>' + esc(au.name) + '</span>' +
+          '<span class="pn-dot">·</span><span>' + num(p, 'likes', 'likes_count') + ' ♥</span>' +
+          '<span class="pn-dot">·</span><span>' + num(p, 'comments', 'comments_count') + ' 💬</span>' +
         '</div>' +
         (host ? '<span class="pn-src">' + esc(host) + '</span>' : '') +
       '</div>' +
@@ -18194,13 +18231,14 @@ function pikCallsDelete(id) {
     var date = '';
     try { date = new Date(p.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); } catch (e) {}
 
+    var au = who(p);
     document.getElementById('arTopic').textContent = p.topic || '';
     document.getElementById('arBody').innerHTML =
       (a.cover ? '<img class="ar-cover" src="' + esc(a.cover) + '" alt="">' : '') +
       '<h1>' + esc(a.title || 'Без названия') + '</h1>' +
       '<div class="ar-byline">' +
-        (p.avatar_url ? '<img src="' + esc(p.avatar_url) + '" alt="">' : '<img alt="">') +
-        '<span><b>' + esc(p.username || '') + '</b>' + (date ? ' · ' + esc(date) : '') + '</span>' +
+        (au.avatar ? '<img src="' + esc(au.avatar) + '" alt="">' : '<img alt="">') +
+        '<span><b>' + esc(au.name) + '</b>' + (date ? ' · ' + esc(date) : '') + '</span>' +
       '</div>' +
       (host ? '<a class="ar-source" href="' + esc(a.src) + '" target="_blank" rel="noopener noreferrer nofollow">' +
         '<div class="ar-source-l"><div class="ar-source-k">Исследование</div><div class="ar-source-v">' + esc(host) + '</div></div>' +
@@ -18208,27 +18246,98 @@ function pikCallsDelete(id) {
       '</a>' : '') +
       body +
       '<div class="ar-actions">' +
-        '<button class="ar-act' + (p.my_like ? ' on' : '') + '" id="arLike" onclick="pnLike(' + Number(p.id) + ')">' +
+        '<button class="ar-act' + (liked(p) ? ' on' : '') + '" id="arLike" onclick="pnLike(' + Number(p.id) + ')">' +
           '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5 4.2 12.7a4.6 4.6 0 0 1 6.5-6.5l1.3 1.3 1.3-1.3a4.6 4.6 0 1 1 6.5 6.5z"/></svg>' +
-          '<span id="arLikeN">' + Number(p.likes_count || 0) + '</span>' +
+          '<span id="arLikeN">' + num(p, 'likes', 'likes_count') + '</span>' +
         '</button>' +
-        '<span style="font-size:12.5px;color:#8a8a90">' + Number(p.views_count || 0) + ' просмотров</span>' +
+        '<span style="font-size:12.5px;color:#8a8a90">' + num(p, 'views', 'views_count') + ' просмотров</span>' +
+      '</div>' +
+      '<div class="ar-comments">' +
+        '<div class="ar-c-head">Комментарии <span id="arCN">' + num(p, 'comments', 'comments_count') + '</span></div>' +
+        '<div class="ar-c-form">' +
+          '<textarea id="arCText" rows="1" maxlength="1000" placeholder="Написать комментарий..." oninput="pnCGrow(this)"></textarea>' +
+          '<button class="ar-c-send" onclick="pnSendComment(' + Number(p.id) + ')">Отправить</button>' +
+        '</div>' +
+        '<div id="arCList" class="ar-c-list"><div class="ar-c-empty">Загружаем…</div></div>' +
       '</div>';
     showPage('article');
+    loadComments(p.id);
   }
+
+  // ── комментарии ──
+  function commentHtml(c, depth) {
+    var au = who(c);
+    var date = '';
+    try { date = new Date(c.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'short' }); } catch (e) {}
+    var kids = Array.isArray(c.replies) ? c.replies : [];
+    return '<div class="ar-c-item"' + (depth ? ' style="margin-left:' + Math.min(depth, 2) * 18 + 'px"' : '') + '>' +
+      (au.avatar ? '<img class="ar-c-ava" src="' + esc(au.avatar) + '" alt="">' : '<span class="ar-c-ava"></span>') +
+      '<div class="ar-c-body">' +
+        '<div class="ar-c-name">' + esc(au.name || 'Аноним') + (date ? ' <span>' + esc(date) + '</span>' : '') + '</div>' +
+        '<div class="ar-c-text">' + esc(c.text || '') + '</div>' +
+      '</div>' +
+    '</div>' + kids.map(function(k) { return commentHtml(k, (depth || 0) + 1); }).join('');
+  }
+
+  function loadComments(id) {
+    var box = document.getElementById('arCList');
+    if (!box) return;
+    fetch('/api/posts/' + id + '/comments', { credentials: 'include' })
+      .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d) {
+        var list = d.comments || [];
+        box.innerHTML = list.length
+          ? list.map(function(c) { return commentHtml(c, 0); }).join('')
+          : '<div class="ar-c-empty">Пока нет комментариев</div>';
+      })
+      .catch(function(e) {
+        box.innerHTML = '<div class="ar-c-empty">' +
+          (String(e.message) === '401' ? 'Комментарии видны после входа' : 'Не удалось загрузить комментарии') + '</div>';
+      });
+  }
+
+  function sendComment(id) {
+    var ta = document.getElementById('arCText');
+    var text = (ta.value || '').trim();
+    if (!text) return;
+    ta.disabled = true;
+    fetch('/api/posts/' + id + '/comments', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (typeof _pikCsrfToken !== 'undefined' ? _pikCsrfToken : '') || '' },
+      body: JSON.stringify({ text: text })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d || !d.ok) throw new Error('fail');
+        ta.value = '';
+        ta.style.height = '';
+        var p = CACHE[id];
+        if (p) { if (p.comments !== undefined) p.comments++; else p.comments_count = Number(p.comments_count || 0) + 1; }
+        var n = document.getElementById('arCN');
+        if (n) n.textContent = Number(n.textContent || 0) + 1;
+        loadComments(id);
+      })
+      .catch(function() { alert('Не удалось отправить комментарий'); })
+      .then(function() { ta.disabled = false; });
+  }
+
+  window.pnSendComment = sendComment;
+  window.pnCGrow = function(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; };
 
   function like(id) {
     var p = CACHE[id]; if (!p) return;
     if (typeof snRequireAuth === 'function' && !snRequireAuth()) return;
     if (typeof pikApi !== 'function') return;
     pikApi('POST', '/api/posts/' + id + '/like').then(function(d) {
-      p.my_like = d.liked ? 1 : 0;
-      if (typeof d.likes_count === 'number') p.likes_count = d.likes_count;
-      else p.likes_count = Math.max(0, Number(p.likes_count || 0) + (d.liked ? 1 : -1));
+      // сервер отвечает { liked, count }
+      var cnt = (typeof d.count === 'number') ? d.count
+              : Math.max(0, num(p, 'likes', 'likes_count') + (d.liked ? 1 : -1));
+      if (p.liked !== undefined) p.liked = !!d.liked; else p.my_like = d.liked ? 1 : 0;
+      if (p.likes !== undefined) p.likes = cnt; else p.likes_count = cnt;
       var btn = document.getElementById('arLike');
       if (btn) btn.classList.toggle('on', !!d.liked);
       var n = document.getElementById('arLikeN');
-      if (n) n.textContent = p.likes_count;
+      if (n) n.textContent = cnt;
     }).catch(function(){});
   }
 
