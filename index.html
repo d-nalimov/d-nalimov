@@ -12448,6 +12448,26 @@ hfRender();
     </div>
   </div>
 
+  <!-- Обложка -->
+  <div class="cr-field-wrap">
+    <label class="cr-label">Обложка</label>
+    <div class="cr-cover" id="crCover" onclick="crPickCover()">
+      <div class="cr-cover-empty" id="crCoverEmpty">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span class="cr-cover-t">Добавить обложку</span>
+        <span class="cr-cover-s">Её увидят в ленте — подойдёт любой формат: 16:9, 3:4, 9:16</span>
+      </div>
+      <img class="cr-cover-img" id="crCoverImg" alt="">
+    </div>
+    <div class="cr-cover-acts" id="crCoverActs" style="display:none">
+      <button type="button" class="cr-cover-btn" onclick="crPickCover()">Заменить</button>
+      <button type="button" class="cr-cover-btn danger" onclick="crRemoveCover()">Удалить</button>
+    </div>
+    <input type="file" id="crCoverInput" accept="image/*" style="display:none" onchange="crSetCover(this)">
+  </div>
+
   <!-- Название -->
   <div class="cr-field-wrap">
     <label class="cr-label">Название статьи</label>
@@ -14672,6 +14692,32 @@ function crInsertLink() {
   if (url) { document.getElementById('crEditor').focus(); document.execCommand('createLink', false, url); }
 }
 
+// ── обложка статьи ──
+// Уходит первым файлом поста: в ленте и на странице статьи обложкой
+// становится первое фото, не вставленное в текст.
+var _crCoverFile = null;
+function crPickCover() { document.getElementById('crCoverInput').click(); }
+
+function crSetCover(input) {
+  var f = input.files && input.files[0];
+  input.value = '';
+  if (!f) return;
+  _crCoverFile = f;
+  var img = document.getElementById('crCoverImg');
+  img.src = URL.createObjectURL(f);
+  document.getElementById('crCover').classList.add('has');
+  document.getElementById('crCoverActs').style.display = 'flex';
+}
+
+function crRemoveCover(e) {
+  if (e) e.stopPropagation();
+  _crCoverFile = null;
+  var img = document.getElementById('crCoverImg');
+  img.removeAttribute('src');
+  document.getElementById('crCover').classList.remove('has');
+  document.getElementById('crCoverActs').style.display = 'none';
+}
+
 // ── картинка посреди текста ──
 // Файл кладём в общий список вложений, а в тексте оставляем метку; при
 // публикации метка превращается в [[img:N]] — санитайзер сервера её не трогает.
@@ -14940,9 +14986,11 @@ function crPublish() {
     return;
   }
 
-  // Вставленные в текст картинки → [[img:N]]; N назначаем по порядку появления
+  // Вставленные в текст картинки → [[img:N]]; N назначаем по порядку появления.
+  // Обложка идёт первым файлом и в тексте не упоминается.
   var clone = editor.cloneNode(true);
   var ordered = [];
+  if (_crCoverFile) ordered.push(_crCoverFile);
   Array.prototype.slice.call(clone.querySelectorAll('img[data-cr-media]')).forEach(function(img) {
     var f = _crMediaFiles[Number(img.getAttribute('data-cr-media'))];
     if (!f) { img.parentNode.removeChild(img); return; }
@@ -14959,7 +15007,7 @@ function crPublish() {
   var text = srcHtml + titleHtml + bodyHtml;
   var html = text;
 
-  if (!titleVal && !plainText && ordered.length === 0) {
+  if (!titleVal && !plainText && ordered.length === 0 && !_crCoverFile) {
     crShowStatus('⚠ Напиши что-нибудь или добавь медиа', '#FFB84E');
     return;
   }
@@ -15000,6 +15048,9 @@ function crPublish() {
           editor.innerHTML = '';
           document.getElementById('crTitle').value = '';
           _crMediaFiles = [];
+          crRemoveCover();
+          document.getElementById('crSource').value = '';
+          crCheckSource();
           crRenderPreview();
           crResetPoll();
           crResetPin();
@@ -17959,6 +18010,29 @@ function pikCallsDelete(id) {
 }
 #page-create .cr-publish-btn:hover { opacity:.88; }
 #page-create .cr-preview-item img, #page-create .cr-preview-item video { border-radius:14px; }
+/* зона обложки */
+.cr-cover {
+  position:relative; width:100%; min-height:170px; border-radius:18px; overflow:hidden;
+  border:1.5px dashed #d8d8d2; background:#fafaf8; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:border-color .15s, background .15s;
+}
+.cr-cover:hover { border-color:#141416; background:#f4f4f2; }
+.cr-cover-empty { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; padding:26px 20px; color:#141416; }
+.cr-cover-t { font-size:14px; font-weight:700; letter-spacing:-.01em; }
+.cr-cover-s { font-size:11.5px; color:#8a8a90; max-width:250px; line-height:1.45; }
+.cr-cover-img { display:none; width:100%; max-height:340px; object-fit:cover; }
+.cr-cover.has { border-style:solid; border-color:#e6e6e2; background:#fff; min-height:0; cursor:default; }
+.cr-cover.has .cr-cover-empty { display:none; }
+.cr-cover.has .cr-cover-img { display:block; }
+.cr-cover-acts { display:flex; gap:8px; margin-top:9px; }
+.cr-cover-btn {
+  border:1px solid #e6e6e2; background:#fff; color:#141416; font-family:inherit;
+  font-size:12.5px; font-weight:600; padding:8px 16px; border-radius:999px; cursor:pointer;
+}
+.cr-cover-btn:hover { border-color:#141416; }
+.cr-cover-btn.danger { color:#c2453c; }
+.cr-cover-btn.danger:hover { border-color:#c2453c; }
+
 .cr-source-input.good { border-color:#141416 !important; }
 .cr-source-input.bad { border-color:#c2453c !important; }
 .cr-source-note { margin-top:7px; font-size:11.5px; line-height:1.45; color:#8a8a90; }
@@ -18026,9 +18100,13 @@ function pikCallsDelete(id) {
     if (h1) h1.remove();
     var plain = (box.textContent || '').replace(/\[\[img:\d+\]\]/g, '').trim();
     var media = Array.isArray(p.media) ? p.media : [];
+    // обложка — первое фото, которое не вставлено в текст: иначе одна и та же
+    // картинка показалась бы и шапкой статьи, и внутри неё
+    var used = {};
+    (raw.match(/\[\[img:(\d+)\]\]/g) || []).forEach(function(m) { used[m.replace(/\D/g, '')] = 1; });
     var cover = null;
     for (var i = 0; i < media.length; i++) {
-      if (media[i] && media[i].type !== 'video') { cover = media[i].url; break; }
+      if (media[i] && media[i].type !== 'video' && !used[String(i)]) { cover = media[i].url; break; }
     }
     return { title: title, body: box.innerHTML, plain: plain, cover: cover, media: media, src: src };
   }
