@@ -17885,12 +17885,15 @@ function pikCallsDelete(id) {
 /* ─── плитка ленты ─── */
 #page-feed.pn-on { background:#fff; color:#141416; }
 #page-feed.pn-on .w { max-width:1180px; }
-/* затухание у полосы тем рассчитано на тёмный фон и растянуто на весь экран —
-   на белой ленте оно читалось как чёрная полоса справа */
-#page-feed.pn-on .sn-topics-bar-wrap::after {
-  background:linear-gradient(to right, rgba(255,255,255,0), #fff);
-  height:100%;
-}
+/* в плитке шапка ленты — только заголовок и кнопка публикации:
+   фильтр тем, истории и приглашение «поделись прогрессом» скрыты.
+   Элементы остаются в DOM — к ним обращается старый код ленты. */
+#page-feed.pn-on .sn-topics-bar-wrap,
+#page-feed.pn-on #snStoriesBar,
+#page-feed.pn-on #snFeedCreateHint,
+#page-feed.pn-on #snCreatePost,
+#page-feed.pn-on .w > .div { display:none !important; }
+#page-feed.pn-on .w { padding-top:4px; }
 .pn-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
 .pn-title { font-size:22px; font-weight:800; letter-spacing:-.02em; color:#141416; margin:0; flex:1 1 auto; min-width:0; }
 .pn-new {
