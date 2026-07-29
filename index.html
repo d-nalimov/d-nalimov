@@ -17972,7 +17972,6 @@ function pikCallsDelete(id) {
 }
 .ar-act:hover { border-color:#141416; }
 .ar-act.on { background:#141416; color:#fff; border-color:#141416; }
-.pn-dot { color:#c4c4bd; }
 
 /* комментарии под статьёй */
 .ar-comments { margin-top:26px; padding-top:20px; border-top:1px solid #e6e6e2; }
@@ -18173,8 +18172,6 @@ function pikCallsDelete(id) {
         '<div class="pn-card-sub">' +
           (au.avatar ? '<img class="pn-ava" src="' + esc(au.avatar) + '" alt="">' : '<span class="pn-ava"></span>') +
           '<span>' + esc(au.name) + '</span>' +
-          '<span class="pn-dot">·</span><span>' + num(p, 'likes', 'likes_count') + ' ♥</span>' +
-          '<span class="pn-dot">·</span><span>' + num(p, 'comments', 'comments_count') + ' 💬</span>' +
         '</div>' +
         (host ? '<span class="pn-src">' + esc(host) + '</span>' : '') +
       '</div>' +
