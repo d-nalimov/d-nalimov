@@ -12557,18 +12557,6 @@ hfRender();
     <span class="cr-char-count" id="crCharCount">0 символов</span>
   </div>
 
-  <!-- Telegram-канал автора -->
-  <div class="cr-field-wrap cr-tg-wrap">
-    <label class="cr-label" for="crTg">Ваш Telegram канал</label>
-    <div class="cr-tg">
-      <span class="cr-tg-ico">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.9 13.1 2.4 11.7c-1-.3-1-1 .2-1.4l18-6.9c.8-.3 1.5.2 1.3 1z"/></svg>
-      </span>
-      <input type="text" id="crTg" placeholder="t.me/ваш_канал" autocomplete="off" oninput="crCheckTg()">
-    </div>
-    <div class="cr-tg-note" id="crTgNote"></div>
-  </div>
-
   <div id="crPollBuilder" style="display:none;margin-top:14px;background:rgba(70,100,255,0.08);border:1.5px solid rgba(100,150,255,0.3);border-radius:16px;padding:18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
       <span style="font-size:13px;font-weight:700;color:var(--text);">Опрос</span>
@@ -12601,11 +12589,20 @@ hfRender();
   <div class="cr-preview" id="crPreview"></div>
   <div class="cr-status" id="crStatus"></div>
 
-  <!-- Кнопка публикации -->
-  <button class="cr-publish-btn cr-publish-bottom" onclick="crPublish()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    Опубликовать
-  </button>
+  <!-- Telegram-канал автора и публикация — одной строкой -->
+  <div class="cr-bottom-row">
+    <div class="cr-tg">
+      <span class="cr-tg-ico">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.9 13.1 2.4 11.7c-1-.3-1-1 .2-1.4l18-6.9c.8-.3 1.5.2 1.3 1z"/></svg>
+      </span>
+      <input type="text" id="crTg" placeholder="t.me/ваш_канал" autocomplete="off" oninput="crCheckTg()">
+    </div>
+    <button class="cr-publish-btn cr-publish-bottom" onclick="crPublish()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Опубликовать
+    </button>
+  </div>
+  <div class="cr-tg-note" id="crTgNote"></div>
 
 </div>
 </div>
@@ -18167,10 +18164,14 @@ function pikCallsDelete(id) {
 .cr-cover-btn.danger { color:#c2453c; }
 .cr-cover-btn.danger:hover { border-color:#c2453c; }
 
-/* поле Telegram-канала — синяя пилюля, не на всю ширину */
+/* поле Telegram-канала — синяя пилюля рядом с кнопкой публикации */
+.cr-bottom-row { display:flex; align-items:stretch; gap:10px; margin-top:14px; }
+.cr-bottom-row .cr-tg { flex:1 1 auto; min-width:0; }
+#page-create .cr-bottom-row .cr-publish-bottom {
+  width:auto; flex:0 0 auto; margin-top:0; white-space:nowrap; padding:13px 22px;
+}
 .cr-tg {
-  display:inline-flex; align-items:center; gap:9px; padding:0 8px 0 15px;
-  max-width:300px; width:100%;
+  display:flex; align-items:center; gap:9px; padding:0 8px 0 15px;
   background:#229ED9; border:1px solid #229ED9; border-radius:999px; overflow:hidden;
 }
 .cr-tg-ico { display:flex; align-items:center; color:#fff; flex-shrink:0; }
@@ -18195,9 +18196,14 @@ function pikCallsDelete(id) {
 
 /* ровный шаг между блоками под текстом */
 #page-create .cr-media-bar { margin-top:12px; gap:8px; }
-#page-create .cr-tg-wrap { margin-top:14px; margin-bottom:0; }
-#page-create .cr-tg-wrap .cr-label { margin-bottom:7px; }
-#page-create .cr-publish-bottom { margin-top:18px; }
+#page-create .cr-publish-bottom { margin-top:14px; }
+/* на узком экране пилюля и кнопка всё равно должны уместиться в строку */
+@media (max-width:420px) {
+  .cr-bottom-row { gap:8px; }
+  .cr-tg { padding-left:12px; gap:7px; }
+  .cr-tg input { font-size:13px; padding:12px 4px 12px 0; }
+  #page-create .cr-bottom-row .cr-publish-bottom { padding:12px 16px; font-size:13.5px; gap:6px; }
+}
 /* иначе кнопка публикации прячется под плавающим нижним меню */
 #page-create .cr-wrap { padding-bottom:110px; }
 #page-create .cr-preview:empty { display:none; }
