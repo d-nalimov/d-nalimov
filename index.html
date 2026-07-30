@@ -12566,7 +12566,7 @@ hfRender();
       </span>
       <input type="text" id="crTg" placeholder="t.me/ваш_канал" autocomplete="off" oninput="crCheckTg()">
     </div>
-    <div class="cr-tg-note" id="crTgNote">Кнопка с каналом появится под статьёй</div>
+    <div class="cr-tg-note" id="crTgNote"></div>
   </div>
 
   <div id="crPollBuilder" style="display:none;margin-top:14px;background:rgba(70,100,255,0.08);border:1.5px solid rgba(100,150,255,0.3);border-radius:16px;padding:18px;">
@@ -14709,7 +14709,7 @@ function crCheckTg() {
   var note = document.getElementById('crTgNote');
   var v = (inp.value || '').trim();
   inp.classList.remove('bad');
-  if (!v) { note.className = 'cr-tg-note'; note.textContent = 'Кнопка с каналом появится под статьёй'; return true; }
+  if (!v) { note.className = 'cr-tg-note'; note.textContent = ''; return true; }
   var url = typeof pnTgUrl === 'function' ? pnTgUrl(v) : null;
   if (url) {
     note.className = 'cr-tg-note ok';
@@ -18167,9 +18167,10 @@ function pikCallsDelete(id) {
 .cr-cover-btn.danger { color:#c2453c; }
 .cr-cover-btn.danger:hover { border-color:#c2453c; }
 
-/* поле Telegram-канала — синяя пилюля */
+/* поле Telegram-канала — синяя пилюля, не на всю ширину */
 .cr-tg {
-  display:flex; align-items:center; gap:10px; padding:0 8px 0 16px;
+  display:inline-flex; align-items:center; gap:9px; padding:0 8px 0 15px;
+  max-width:300px; width:100%;
   background:#229ED9; border:1px solid #229ED9; border-radius:999px; overflow:hidden;
 }
 .cr-tg-ico { display:flex; align-items:center; color:#fff; flex-shrink:0; }
@@ -18182,8 +18183,19 @@ function pikCallsDelete(id) {
 .cr-tg input.bad { color:#fff; }
 .cr-tg-wrap:has(input.bad) .cr-tg { background:#c2453c; border-color:#c2453c; }
 .cr-tg-note { margin-top:7px; font-size:11.5px; line-height:1.45; color:#8a8a90; }
+.cr-tg-note:empty { display:none; }
 .cr-tg-note.ok { color:#141416; font-weight:600; }
 .cr-tg-note.err { color:#c2453c; font-weight:600; }
+
+/* ровный шаг между блоками под текстом */
+#page-create .cr-media-bar { margin-top:14px; gap:8px; }
+#page-create .cr-tg-wrap { margin-top:14px; margin-bottom:0; }
+#page-create .cr-tg-wrap .cr-label { margin-bottom:7px; }
+#page-create .cr-publish-bottom { margin-top:18px; }
+/* иначе кнопка публикации прячется под плавающим нижним меню */
+#page-create .cr-wrap { padding-bottom:110px; }
+#page-create .cr-preview:empty { display:none; }
+#page-create .cr-status:empty { display:none; margin:0; }
 
 .cr-source-input.good { border-color:#141416 !important; }
 .cr-source-input.bad { border-color:#c2453c !important; }
