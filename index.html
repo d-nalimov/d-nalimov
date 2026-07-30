@@ -12557,6 +12557,18 @@ hfRender();
     <span class="cr-char-count" id="crCharCount">0 символов</span>
   </div>
 
+  <!-- Telegram-канал автора -->
+  <div class="cr-field-wrap cr-tg-wrap">
+    <label class="cr-label" for="crTg">Ваш Telegram канал</label>
+    <div class="cr-tg">
+      <span class="cr-tg-ico">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.9 13.1 2.4 11.7c-1-.3-1-1 .2-1.4l18-6.9c.8-.3 1.5.2 1.3 1z"/></svg>
+      </span>
+      <input type="text" id="crTg" placeholder="t.me/ваш_канал" autocomplete="off" oninput="crCheckTg()">
+    </div>
+    <div class="cr-tg-note" id="crTgNote">Кнопка с каналом появится под статьёй</div>
+  </div>
+
   <div id="crPollBuilder" style="display:none;margin-top:14px;background:rgba(70,100,255,0.08);border:1.5px solid rgba(100,150,255,0.3);border-radius:16px;padding:18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
       <span style="font-size:13px;font-weight:700;color:var(--text);">Опрос</span>
@@ -14691,6 +14703,25 @@ function crInsertLink() {
   if (url) { document.getElementById('crEditor').focus(); document.execCommand('createLink', false, url); }
 }
 
+// ── Telegram-канал автора ──
+function crCheckTg() {
+  var inp = document.getElementById('crTg');
+  var note = document.getElementById('crTgNote');
+  var v = (inp.value || '').trim();
+  inp.classList.remove('bad');
+  if (!v) { note.className = 'cr-tg-note'; note.textContent = 'Кнопка с каналом появится под статьёй'; return true; }
+  var url = typeof pnTgUrl === 'function' ? pnTgUrl(v) : null;
+  if (url) {
+    note.className = 'cr-tg-note ok';
+    note.textContent = url;
+    return true;
+  }
+  inp.classList.add('bad');
+  note.className = 'cr-tg-note err';
+  note.textContent = 'Нужна ссылка на Telegram: t.me/канал или @канал';
+  return false;
+}
+
 // ── обложка статьи ──
 // Уходит первым файлом поста: в ленте и на странице статьи обложкой
 // становится первое фото, не вставленное в текст.
@@ -15001,11 +15032,22 @@ function crPublish() {
   });
   _crMediaFiles.forEach(function(f) { if (ordered.indexOf(f) === -1) ordered.push(f); });
 
+  // Telegram-канал автора
+  var tgInput = document.getElementById('crTg');
+  var tgVal = tgInput ? (tgInput.value || '').trim() : '';
+  var tgLink = tgVal && typeof pnTgUrl === 'function' ? pnTgUrl(tgVal) : null;
+  if (tgVal && !tgLink) {
+    crShowStatus('⚠ Ссылка на Telegram-канал указана неверно', '#c2453c');
+    if (tgInput) tgInput.focus();
+    return;
+  }
+
   var bodyHtml = clone.innerHTML || '';
   var titleHtml = titleVal ? '<h1>' + titleVal + '</h1>' : '';
   var srcHtml = srcVal ? '[[src:' + srcVal + ']]' : '';
+  var tgHtml = tgLink ? '[[tg:' + tgLink + ']]' : '';
 
-  var text = srcHtml + titleHtml + bodyHtml;
+  var text = srcHtml + tgHtml + titleHtml + bodyHtml;
   var html = text;
 
   if (!titleVal && !plainText && ordered.length === 0 && !_crCoverFile) {
@@ -15052,6 +15094,8 @@ function crPublish() {
           crRemoveCover();
           document.getElementById('crSource').value = '';
           crCheckSource();
+          document.getElementById('crTg').value = '';
+          crCheckTg();
           crRenderPreview();
           crResetPoll();
           crResetPin();
@@ -18010,6 +18054,16 @@ function pikCallsDelete(id) {
 #arBody figure { margin:22px 0; }
 #arBody figure img { width:100%; border-radius:18px; display:block; border:1px solid #e6e6e2; }
 #arBody video { width:100%; border-radius:18px; display:block; }
+/* кнопка Telegram-канала автора */
+.ar-tg {
+  display:flex; align-items:center; justify-content:center; gap:9px; margin:26px 0 0;
+  padding:14px 20px; border-radius:999px; text-decoration:none !important;
+  background:#229ED9; border:1px solid #229ED9; color:#fff;
+  font-size:14.5px; font-weight:700; letter-spacing:-.01em; transition:opacity .15s;
+}
+.ar-tg:hover { opacity:.9; }
+.ar-tg svg { width:18px; height:18px; flex-shrink:0; }
+
 .ar-actions { display:flex; align-items:center; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid #e6e6e2; }
 .ar-act {
   display:inline-flex; align-items:center; gap:7px; border:1px solid #e6e6e2; background:#fff; color:#141416;
@@ -18113,6 +18167,24 @@ function pikCallsDelete(id) {
 .cr-cover-btn.danger { color:#c2453c; }
 .cr-cover-btn.danger:hover { border-color:#c2453c; }
 
+/* поле Telegram-канала — синяя пилюля */
+.cr-tg {
+  display:flex; align-items:center; gap:10px; padding:0 8px 0 16px;
+  background:#229ED9; border:1px solid #229ED9; border-radius:999px; overflow:hidden;
+}
+.cr-tg-ico { display:flex; align-items:center; color:#fff; flex-shrink:0; }
+.cr-tg input {
+  flex:1; min-width:0; border:none; outline:none; background:transparent;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; padding:13px 8px 13px 0;
+}
+.cr-tg input::placeholder { color:rgba(255,255,255,.72); font-weight:500; }
+.cr-tg:focus-within { box-shadow:0 0 0 3px rgba(34,158,217,.22); }
+.cr-tg input.bad { color:#fff; }
+.cr-tg-wrap:has(input.bad) .cr-tg { background:#c2453c; border-color:#c2453c; }
+.cr-tg-note { margin-top:7px; font-size:11.5px; line-height:1.45; color:#8a8a90; }
+.cr-tg-note.ok { color:#141416; font-weight:600; }
+.cr-tg-note.err { color:#c2453c; font-weight:600; }
+
 .cr-source-input.good { border-color:#141416 !important; }
 .cr-source-input.bad { border-color:#c2453c !important; }
 .cr-source-note { margin-top:7px; font-size:11.5px; line-height:1.45; color:#8a8a90; }
@@ -18166,6 +18238,24 @@ function pikCallsDelete(id) {
   window.pnSrcHost = srcHost;
   window.pnSrcHosts = SRC_HOSTS;
 
+  // ── ссылка на Telegram-канал: принимаем t.me/..., @канал и канал ──
+  function tgUrl(v) {
+    v = String(v == null ? '' : v).trim();
+    if (!v) return null;
+    if (/^@[A-Za-z][\w\d_]{3,31}$/.test(v)) return 'https://t.me/' + v.slice(1);
+    if (/^[A-Za-z][\w\d_]{3,31}$/.test(v)) return 'https://t.me/' + v;
+    try {
+      var u = new URL(v.indexOf('://') === -1 ? 'https://' + v : v);
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+      var h = u.hostname.replace(/^www\./, '').toLowerCase();
+      if (h !== 't.me' && h !== 'telegram.me' && h !== 'telegram.dog') return null;
+      var path = (u.pathname || '').replace(/\/+$/, '');
+      if (!path || path === '/') return null;
+      return 'https://t.me' + path + (u.search || '');
+    } catch (e) { return null; }
+  }
+  window.pnTgUrl = tgUrl;
+
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 
   // /api/feed отдаёт автора вложенным объектом и короткие имена счётчиков,
@@ -18180,8 +18270,9 @@ function pikCallsDelete(id) {
   // ── разбор поста ──
   function parsePost(p) {
     var raw = String(p.text || '');
-    var src = null;
+    var src = null, tg = null;
     raw = raw.replace(/\[\[src:([^\]]+)\]\]/, function(_, u) { src = u.trim(); return ''; });
+    raw = raw.replace(/\[\[tg:([^\]]+)\]\]/, function(_, u) { tg = tgUrl(u.trim()); return ''; });
     var box = document.createElement('div');
     box.innerHTML = raw;
     var h1 = box.querySelector('h1');
@@ -18197,7 +18288,7 @@ function pikCallsDelete(id) {
     for (var i = 0; i < media.length; i++) {
       if (media[i] && media[i].type !== 'video' && !used[String(i)]) { cover = media[i].url; break; }
     }
-    return { title: title, body: box.innerHTML, plain: plain, cover: cover, media: media, src: src };
+    return { title: title, body: box.innerHTML, plain: plain, cover: cover, media: media, src: src, tg: tg };
   }
 
   // ── карточка плитки ──
@@ -18287,6 +18378,10 @@ function pikCallsDelete(id) {
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><polyline points="8 7 17 7 17 16"/></svg>' +
       '</a>' : '') +
       body +
+      (a.tg ? '<a class="ar-tg" href="' + esc(a.tg) + '" target="_blank" rel="noopener noreferrer nofollow">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.9 13.1 2.4 11.7c-1-.3-1-1 .2-1.4l18-6.9c.8-.3 1.5.2 1.3 1z"/></svg>' +
+        'Telegram-канал автора' +
+      '</a>' : '') +
       '<div class="ar-actions">' +
         '<button class="ar-act' + (liked(p) ? ' on' : '') + '" id="arLike" onclick="pnLike(' + Number(p.id) + ')">' +
           '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5 4.2 12.7a4.6 4.6 0 0 1 6.5-6.5l1.3 1.3 1.3-1.3a4.6 4.6 0 1 1 6.5 6.5z"/></svg>' +
