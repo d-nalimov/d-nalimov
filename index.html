@@ -18187,8 +18187,14 @@ function pikCallsDelete(id) {
 .cr-tg-note.ok { color:#141416; font-weight:600; }
 .cr-tg-note.err { color:#c2453c; font-weight:600; }
 
+/* «Фото / Видео» и «Опрос» убраны: картинки вставляются кнопкой в тулбаре,
+   обложка — отдельным блоком сверху. Остаётся счётчик символов. */
+#page-create .cr-media-bar > label.cr-media-btn,
+#page-create #crPollBtn,
+#page-create #crPollBuilder { display:none !important; }
+
 /* ровный шаг между блоками под текстом */
-#page-create .cr-media-bar { margin-top:14px; gap:8px; }
+#page-create .cr-media-bar { margin-top:12px; gap:8px; }
 #page-create .cr-tg-wrap { margin-top:14px; margin-bottom:0; }
 #page-create .cr-tg-wrap .cr-label { margin-bottom:7px; }
 #page-create .cr-publish-bottom { margin-top:18px; }
