@@ -16,17 +16,13 @@ export function CourseCard({
       {category.cover ? (
         <img className="course__img" src={category.cover} alt="" loading="lazy" />
       ) : (
+        // Пока обложки нет — ровная подложка в тон категории.
         <div
           className="course__img"
           style={{
-            background: `radial-gradient(120% 90% at 20% 10%, ${category.tint} 0%, #12100c 70%, #0b0705 100%)`,
-            display: 'grid',
-            placeItems: 'center',
-            fontSize: 54,
+            background: `linear-gradient(160deg, ${category.tint} 0%, #14100c 100%)`,
           }}
-        >
-          <span style={{ opacity: 0.55 }}>{category.emoji}</span>
-        </div>
+        />
       )}
 
       <div className="course__shade" />

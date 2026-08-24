@@ -162,3 +162,17 @@ export const SendIcon = (p: IconProps) => (
     <path d="m9.7 12.8 4-4" />
   </Icon>
 )
+
+export const LibraryIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 4.5h4.2v15H5z" />
+    <path d="M10.8 4.5H15v15h-4.2z" />
+    <path d="m16.6 5.4 3 .8-3.4 13.1-2.2-.6" />
+  </Icon>
+)
+
+export const ChatIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M20 12.4c0 3.6-3.6 6.5-8 6.5a9.6 9.6 0 0 1-2.6-.35L4.5 20l1.2-3.2A6.2 6.2 0 0 1 4 12.4C4 8.8 7.6 6 12 6s8 2.8 8 6.4Z" />
+  </Icon>
+)

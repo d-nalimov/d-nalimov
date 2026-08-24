@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { CourseCard } from '../components/CourseCard'
 import { PaywallSheet } from '../components/PaywallSheet'
 import { ProfileCard } from '../components/ProfileCard'
+import { ChatIcon, LibraryIcon, UsersIcon } from '../components/icons'
 import { Screen, Skeleton } from '../components/ui'
 import { haptic, openTelegram } from '../telegram/sdk'
 import { useBackButton } from '../telegram/useTelegram'
@@ -37,7 +38,9 @@ export function HomePage() {
             document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
-          <span className="tile__emoji">📚</span>
+          <span className="tile__icon">
+            <LibraryIcon size={22} />
+          </span>
           <span className="tile__label">База материалов</span>
         </button>
         <button
@@ -48,7 +51,9 @@ export function HomePage() {
             navigate('/curators')
           }}
         >
-          <span className="tile__emoji">🧑‍🏫</span>
+          <span className="tile__icon">
+            <UsersIcon size={22} />
+          </span>
           <span className="tile__label">Кураторы</span>
         </button>
         <button
@@ -59,7 +64,9 @@ export function HomePage() {
             if (config) openTelegram(config.communityUrl)
           }}
         >
-          <span className="tile__emoji">💬</span>
+          <span className="tile__icon">
+            <ChatIcon size={22} />
+          </span>
           <span className="tile__label">Сообщество</span>
         </button>
       </div>

@@ -124,9 +124,15 @@
   text-align: center;
 }
 
-.tile__emoji {
-  font-size: 26px;
-  line-height: 1;
+.tile__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--accent);
 }
 
 .tile__label {
@@ -537,6 +543,13 @@
   font-family: var(--font-display);
   font-size: 20px;
   color: var(--accent);
+}
+
+.shop__price-unit {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mute);
 }
 
 /* ---------- Колесо ---------- */

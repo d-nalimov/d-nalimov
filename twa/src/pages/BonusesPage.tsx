@@ -182,17 +182,18 @@ export function BonusesPage() {
                   const affordable = moggs >= item.price
                   return (
                     <div className="shop__item" key={item.id}>
-                      <div
-                        className="shop__img"
-                        style={{ display: 'grid', placeItems: 'center', fontSize: 40 }}
-                      >
-                        {item.emoji}
-                      </div>
+                      {item.image ? (
+                        <img className="shop__img" src={item.image} alt="" loading="lazy" />
+                      ) : (
+                        <div className="shop__img" />
+                      )}
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{item.title}</div>
                       <div className="muted" style={{ fontSize: 12, flex: 1 }}>
                         {item.description}
                       </div>
-                      <div className="shop__price">{item.price} ✦</div>
+                      <div className="shop__price">
+                        {item.price} <span className="shop__price-unit">моггсов</span>
+                      </div>
                       <button
                         className={`btn${affordable ? ' btn--accent' : ''}`}
                         style={{ minHeight: 40 }}

@@ -35,9 +35,9 @@ export interface Category {
   id: string
   title: string
   subtitle: string
-  emoji: string
-  /** Оттенок обложки (чёрно-коричневая гамма). */
+  /** Оттенок подложки, пока не проставлена обложка. */
   tint: string
+  /** URL обложки категории. */
   cover?: string
   lessonsCount: number
   /** Категория целиком открыта без оплаты. */
@@ -114,7 +114,8 @@ export interface ShopItem {
   title: string
   description: string
   price: number
-  emoji: string
+  /** URL картинки товара. */
+  image?: string
 }
 
 export interface SpinResult {
