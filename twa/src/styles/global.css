@@ -18,7 +18,7 @@ body {
   color: var(--text);
   font-family: var(--font);
   font-size: 15px;
-  line-height: 1.45;
+  line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
 }
@@ -72,12 +72,12 @@ img {
 
 .screen__title {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 30px;
-  line-height: 1.05;
-  letter-spacing: 0.02em;
+  line-height: 1;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  margin: 4px 0 18px;
+  margin: 4px 0 16px;
 }
 
 .screen__head {
@@ -93,22 +93,45 @@ img {
 }
 
 .section-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin: 26px 0 12px;
-}
-
-.breadcrumb {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 26px 0 12px;
+}
+
+/* Шапка раздела: шеврон слева, под заголовком — родительский экран. */
+.subhead {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0 16px;
+}
+
+.subhead__back {
+  flex: none;
+  padding: 2px 2px 0 0;
+  color: var(--text);
+}
+
+.subhead__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.subhead__parent {
   color: var(--text-mute);
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-top: 5px;
 }
 
 .muted {
@@ -125,7 +148,6 @@ img {
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border-soft);
   border-radius: var(--radius);
   padding: 16px;
 }
@@ -178,13 +200,13 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: var(--accent);
   color: var(--on-accent);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -221,6 +243,6 @@ img {
 }
 
 .chevron {
-  color: var(--accent);
+  color: var(--text);
   flex: none;
 }

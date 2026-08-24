@@ -82,7 +82,7 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   textAlign: 'center',
-                  color: sector.blank ? 'var(--text-mute)' : 'var(--text)',
+                  color: labelColor(sector.color, sector.blank),
                 }}
               >
                 {sector.label}
@@ -94,6 +94,15 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
       <div className="wheel__hub">{spinning ? '...' : 'Крутить'}</div>
     </div>
   )
+}
+
+/** Тёмная подпись на светлом секторе и наоборот — в монохроме читаемость решает всё. */
+function labelColor(hex: string, blank?: boolean): string {
+  const value = hex.replace('#', '')
+  const [r, g, b] = [0, 2, 4].map((i) => Number.parseInt(value.slice(i, i + 2), 16) / 255)
+  const light = 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.55
+  if (blank) return light ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.45)'
+  return light ? '#111111' : '#ffffff'
 }
 
 export function WheelLegend({ sectors }: { sectors: WheelSector[] }) {

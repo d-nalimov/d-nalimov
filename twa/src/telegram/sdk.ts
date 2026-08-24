@@ -30,8 +30,8 @@ export function initTelegram(): void {
   if (!app) return
   app.ready()
   app.expand()
-  app.setHeaderColor?.('#0b0705')
-  app.setBackgroundColor?.('#0b0705')
+  app.setHeaderColor?.('#000000')
+  app.setBackgroundColor?.('#000000')
   app.disableVerticalSwipes?.()
 }
 

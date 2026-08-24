@@ -1,5 +1,4 @@
 import type { Category } from '../api/types'
-import { plural } from '../lib/format'
 import { ChevronRight, LockIcon } from './icons'
 
 export function CourseCard({
@@ -20,7 +19,7 @@ export function CourseCard({
         <div
           className="course__img"
           style={{
-            background: `linear-gradient(160deg, ${category.tint} 0%, #14100c 100%)`,
+            background: `linear-gradient(165deg, ${category.tint} 0%, #121212 100%)`,
           }}
         />
       )}
@@ -36,8 +35,8 @@ export function CourseCard({
       <div className="course__body">
         <div className="course__title">{category.title}</div>
         <div className="course__meta">
-          <ChevronRight size={14} />
-          {category.lessonsCount} {plural(category.lessonsCount, 'урок', 'урока', 'уроков')}
+          <ChevronRight size={15} strokeWidth={2.4} />
+          {category.lessonsCount}
         </div>
       </div>
     </button>

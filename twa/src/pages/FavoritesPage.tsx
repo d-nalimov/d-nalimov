@@ -45,7 +45,7 @@ export function FavoritesPage() {
           ))}
         </div>
       ) : visible.length ? (
-        <div className="stack">
+        <div className="lesson-list">
           {visible.map((lesson) => (
             <LessonCard
               key={lesson.id}

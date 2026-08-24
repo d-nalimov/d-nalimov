@@ -26,11 +26,15 @@ export function ProfilePage() {
 
   return (
     <Screen>
-      <button className="breadcrumb" onClick={() => navigate('/')} type="button">
-        <ChevronLeft size={16} />
-        Главная
-      </button>
-      <h1 className="screen__title">Профиль</h1>
+      <div className="subhead">
+        <button className="subhead__back" onClick={() => navigate('/')} type="button" aria-label="Назад">
+          <ChevronLeft size={20} />
+        </button>
+        <div>
+          <h1 className="subhead__title">Профиль</h1>
+          <div className="subhead__parent">Главная</div>
+        </div>
+      </div>
 
       {user ? <ProfileCard user={user} /> : <Skeleton height={72} />}
 

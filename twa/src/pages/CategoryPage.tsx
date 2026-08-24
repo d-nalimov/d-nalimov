@@ -54,20 +54,19 @@ export function CategoryPage() {
 
   return (
     <Screen>
-      <button
-        className="breadcrumb"
-        onClick={() => navigate('/')}
-        type="button"
-        style={{ background: 'none' }}
-      >
-        <ChevronLeft size={16} />
-        Главная
-      </button>
-      <h1 className="screen__title">{category?.title ?? 'Категория'}</h1>
+      <div className="subhead">
+        <button className="subhead__back" onClick={() => navigate('/')} type="button" aria-label="Назад">
+          <ChevronLeft size={20} />
+        </button>
+        <div>
+          <h1 className="subhead__title">{category?.title ?? 'Категория'}</h1>
+          <div className="subhead__parent">Главная</div>
+        </div>
+      </div>
 
       <SearchInput value={query} onChange={setQuery} />
 
-      <div className="stack" style={{ marginTop: 14 }}>
+      <div className="lesson-list">
         {!lessons ? (
           [0, 1, 2].map((i) => <Skeleton key={i} height={280} />)
         ) : filtered.length ? (

@@ -5,7 +5,7 @@ import { ApiError } from '../api/types'
 import { PrizeWheel, WheelLegend } from '../components/PrizeWheel'
 import { PromoCard } from '../components/PromoCard'
 import { EmptyState, Screen, Segmented, Sheet, Skeleton } from '../components/ui'
-import { GiftIcon, HistoryIcon, InfoIcon, TicketIcon } from '../components/icons'
+import { ChevronRight, GiftIcon, HistoryIcon, InfoIcon, TicketIcon } from '../components/icons'
 import { formatDate, plural } from '../lib/format'
 import { haptic } from '../telegram/sdk'
 import { useBackButton } from '../telegram/useTelegram'
@@ -117,19 +117,25 @@ export function BonusesPage() {
         </button>
       }
     >
-      <div className="card balance">
-        <div>
-          <div className="muted" style={{ fontSize: 13 }}>
-            Мои моггсы
-          </div>
-          <div className="balance__value moggs">{moggs}</div>
-          <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-            начисляются за просмотр уроков
-          </div>
-        </div>
-        <button className="btn" onClick={() => setShowHistory(true)} type="button">
+      <div className="card">
+        <div className="balance__label">Мои моггсы:</div>
+        <div className="balance__value">{moggs}</div>
+
+        <button
+          className="link-row"
+          style={{ marginTop: 14 }}
+          onClick={() => setShowHistory(true)}
+          type="button"
+        >
           <HistoryIcon size={18} />
-          История
+          История начислений
+          <ChevronRight size={18} className="chevron" style={{ marginLeft: 'auto' }} />
+        </button>
+        <button className="link-row" onClick={() => setTab('prizes')} type="button">
+          <TicketIcon size={18} />
+          Мои призы
+          <span className="link-row__value">{prizes.length}</span>
+          <ChevronRight size={18} className="chevron" />
         </button>
       </div>
 
@@ -176,37 +182,36 @@ export function BonusesPage() {
 
       {tab === 'shop' ? (
         <section style={{ marginTop: 18 }}>
-          <div className="shop">
+          <div className="stack">
             {shop.length
               ? shop.map((item) => {
                   const affordable = moggs >= item.price
                   return (
-                    <div className="shop__item" key={item.id}>
+                    <div className="shop-item" key={item.id}>
                       {item.image ? (
-                        <img className="shop__img" src={item.image} alt="" loading="lazy" />
+                        <img className="shop-item__img" src={item.image} alt="" loading="lazy" />
                       ) : (
-                        <div className="shop__img" />
+                        <div className="shop-item__img" />
                       )}
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{item.title}</div>
-                      <div className="muted" style={{ fontSize: 12, flex: 1 }}>
-                        {item.description}
+                      <div className="shop-item__body">
+                        <div className="shop-item__price">
+                          {item.price}
+                          <span>моггсов</span>
+                        </div>
+                        <div className="shop-item__title">{item.title}</div>
+                        <button
+                          className="shop-item__btn"
+                          disabled={!affordable}
+                          onClick={() => void buy(item.id, item.price, item.title)}
+                          type="button"
+                        >
+                          {affordable ? 'Обменять' : 'Недостаточно моггсов'}
+                        </button>
                       </div>
-                      <div className="shop__price">
-                        {item.price} <span className="shop__price-unit">моггсов</span>
-                      </div>
-                      <button
-                        className={`btn${affordable ? ' btn--accent' : ''}`}
-                        style={{ minHeight: 40 }}
-                        disabled={!affordable}
-                        onClick={() => void buy(item.id, item.price, item.title)}
-                        type="button"
-                      >
-                        {affordable ? 'Обменять' : 'Не хватает'}
-                      </button>
                     </div>
                   )
                 })
-              : [0, 1].map((i) => <Skeleton key={i} height={220} />)}
+              : [0, 1].map((i) => <Skeleton key={i} height={120} />)}
           </div>
         </section>
       ) : null}

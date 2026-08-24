@@ -110,14 +110,16 @@ export function LessonPage() {
 
   return (
     <Screen>
-      <button className="breadcrumb" onClick={() => navigate(-1)} type="button">
-        <ChevronLeft size={16} />
-        К урокам
-      </button>
-
-      <h1 className="screen__title" style={{ fontSize: 24 }}>
-        {lesson.title}
-      </h1>
+      <div className="subhead">
+        <button className="subhead__back" onClick={() => navigate(-1)} type="button" aria-label="Назад">
+          <ChevronLeft size={20} />
+        </button>
+        <div>
+          <h1 className="subhead__title" style={{ fontSize: 22 }}>
+            {lesson.title}
+          </h1>
+        </div>
+      </div>
 
       <LessonPlayer lesson={lesson} startAt={startAt.current} onProgress={onProgress} />
 

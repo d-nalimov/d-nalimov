@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import { App } from './App'
 import { initTelegram } from './telegram/sdk'
+import './styles/fonts.css'
 import './styles/global.css'
 import './styles/components.css'
 

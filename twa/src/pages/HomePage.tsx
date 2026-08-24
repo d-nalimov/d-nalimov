@@ -38,8 +38,8 @@ export function HomePage() {
             document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
-          <span className="tile__icon">
-            <LibraryIcon size={22} />
+          <span className="tile__box">
+            <LibraryIcon size={26} />
           </span>
           <span className="tile__label">База материалов</span>
         </button>
@@ -51,8 +51,8 @@ export function HomePage() {
             navigate('/curators')
           }}
         >
-          <span className="tile__icon">
-            <UsersIcon size={22} />
+          <span className="tile__box">
+            <UsersIcon size={26} />
           </span>
           <span className="tile__label">Кураторы</span>
         </button>
@@ -64,8 +64,8 @@ export function HomePage() {
             if (config) openTelegram(config.communityUrl)
           }}
         >
-          <span className="tile__icon">
-            <ChatIcon size={22} />
+          <span className="tile__box">
+            <ChatIcon size={26} />
           </span>
           <span className="tile__label">Сообщество</span>
         </button>

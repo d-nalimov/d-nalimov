@@ -58,8 +58,8 @@ export function useMainButton({
     if (!app) return
     app.MainButton.setParams({
       text,
-      color: '#c08a5a',
-      text_color: '#17100a',
+      color: '#ffffff',
+      text_color: '#000000',
       is_active: enabled,
       is_visible: visible,
     })

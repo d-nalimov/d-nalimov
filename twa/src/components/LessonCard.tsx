@@ -24,59 +24,58 @@ export function LessonCard({
       ? Math.min(100, (progress.positionSec / progress.durationSec) * 100)
       : 0
 
+  const meta = [
+    formatDuration(lesson.durationSec),
+    lesson.free ? 'Бесплатно' : null,
+    progress?.completed
+      ? 'Пройден'
+      : progress && progress.positionSec > 5
+        ? `Остановились на ${formatTime(progress.positionSec)}`
+        : null,
+  ].filter(Boolean)
+
   return (
-    <article className="lesson">
-      <div className="lesson__head">
-        <h2 className="lesson__title">{lesson.title}</h2>
-        <div className="lesson__fav">
-          <span className="lesson__fav-label">
-            {favorite ? 'В избранном' : 'Добавить в избранное'}
-          </span>
-          <button
-            className={`icon-btn${favorite ? ' icon-btn--on' : ''}`}
-            onClick={onToggleFavorite}
-            aria-label={favorite ? 'Убрать из избранного' : 'Добавить в избранное'}
-            aria-pressed={favorite}
-            type="button"
-            style={favorite ? undefined : { background: '#ded2c8', color: '#6d5c50' }}
-          >
-            <HeartIcon size={20} filled={favorite} />
-          </button>
+    <article>
+      <div className="lesson__card">
+        <div className="lesson__head">
+          <h2 className="lesson__title">{lesson.title}</h2>
+          <div className="lesson__fav">
+            <span className="lesson__fav-label">
+              {favorite ? 'В избранном' : 'Добавить в избранное'}
+            </span>
+            <button
+              className={`lesson__fav-btn${favorite ? ' lesson__fav-btn--on' : ''}`}
+              onClick={onToggleFavorite}
+              aria-label={favorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+              aria-pressed={favorite}
+              type="button"
+            >
+              <HeartIcon size={20} filled={favorite} />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <button className="lesson__poster" onClick={onOpen} type="button" aria-label={lesson.title}>
-        {lesson.poster ? <img src={lesson.poster} alt="" loading="lazy" /> : null}
-        <span className="lesson__play">
-          {locked ? <LockIcon size={22} /> : <PlayIcon size={22} />}
-        </span>
-        {watched > 0 ? (
-          <span className="lesson__progress">
-            <span style={{ width: `${watched}%` }} />
+        <button className="lesson__poster" onClick={onOpen} type="button" aria-label={lesson.title}>
+          {lesson.poster ? <img src={lesson.poster} alt="" loading="lazy" /> : null}
+          <span className="lesson__play">
+            {locked ? <LockIcon size={21} /> : <PlayIcon size={21} />}
           </span>
-        ) : null}
-      </button>
+          {watched > 0 ? (
+            <span className="lesson__progress">
+              <span style={{ width: `${watched}%` }} />
+            </span>
+          ) : null}
+        </button>
 
-      <div className="lesson__badges">
-        <span className="badge badge--muted">{formatDuration(lesson.durationSec)}</span>
-        {lesson.free ? <span className="badge">Бесплатно</span> : null}
-        {progress?.completed ? (
-          <span className="badge badge--soft">Пройден</span>
-        ) : progress && progress.positionSec > 5 ? (
-          <span className="badge badge--soft">Продолжить с {formatTime(progress.positionSec)}</span>
-        ) : null}
-        {!progress?.rewarded ? (
-          <span className="badge badge--muted">+{lesson.moggsReward} моггсов</span>
-        ) : null}
+        <div className="lesson__meta">{meta.join(' · ')}</div>
       </div>
 
+      {/* В референсе материалы — отдельная кнопка под карточкой, а не внутри неё. */}
       {lesson.materialsUrl ? (
-        <div className="lesson__foot">
-          <button className="btn btn--block" onClick={onMaterials} type="button">
-            <DownloadIcon size={19} />
-            Материалы к уроку
-          </button>
-        </div>
+        <button className="btn btn--block" style={{ marginTop: 10 }} onClick={onMaterials} type="button">
+          <DownloadIcon size={19} />
+          Материалы к уроку
+        </button>
       ) : null}
     </article>
   )
