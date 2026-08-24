@@ -70,7 +70,8 @@ Authorization: tma <Telegram.WebApp.initData>
 
 ## Контракт бэкенда
 
-Базовый URL задаётся `VITE_API_BASE_URL`. Все ответы — JSON, ошибки: HTTP-код плюс
+Реализация лежит в `../backend` (FastAPI + SQLAlchemy). Базовый URL задаётся
+`VITE_API_BASE_URL`. Все ответы — JSON, ошибки: HTTP-код плюс
 `{ "message": "...", "code": "..." }` (`payment_required`, `insufficient_funds`,
 `already_used`, `expired`). Типы — `src/api/types.ts`.
 
