@@ -22,13 +22,9 @@ export function ProfileCard({ user, onClick }: { user: User; onClick?: () => voi
           <span className={`badge${isMember ? '' : ' badge--muted'}`}>
             {isMember ? 'Участник' : 'Гость'}
           </span>
-          <span>
-            {isMember
-              ? user.accessUntil
-                ? `до ${formatDate(user.accessUntil)}`
-                : 'доступ навсегда'
-              : 'открыт бесплатный блок'}
-          </span>
+          {isMember ? (
+            <span>{user.accessUntil ? `до ${formatDate(user.accessUntil)}` : 'доступ навсегда'}</span>
+          ) : null}
         </div>
       </div>
 
