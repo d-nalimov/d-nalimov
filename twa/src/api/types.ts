@@ -154,7 +154,6 @@ export interface Api {
   getShop(): Promise<ShopItem[]>
   buy(itemId: string): Promise<{ prize: Prize; moggs: number }>
   getPrizes(): Promise<Prize[]>
-  usePrize(prizeId: string): Promise<Prize>
   getMoggsHistory(): Promise<MoggsEntry[]>
   createPayment(): Promise<PaymentIntent>
   getPaymentStatus(paymentId: string): Promise<PaymentStatus>

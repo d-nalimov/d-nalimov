@@ -97,16 +97,6 @@ export function BonusesPage() {
     }
   }
 
-  async function usePrize(prize: Prize) {
-    try {
-      await api.usePrize(prize.id)
-      await loadPrizes()
-      showToast('Промокод отмечен как использованный')
-    } catch (error) {
-      haptic.error()
-      showToast(error instanceof ApiError ? error.message : 'Не удалось обновить промокод')
-    }
-  }
 
   return (
     <Screen
@@ -224,7 +214,6 @@ export function BonusesPage() {
                 prize={prize}
                 managerUsername={config?.managerUsername ?? 'ceo_trauma'}
                 onCopied={() => showToast('Промокод скопирован')}
-                onUse={(p) => void usePrize(p)}
               />
             ))
           ) : (

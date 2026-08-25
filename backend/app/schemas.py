@@ -141,6 +141,25 @@ class MoggsEntryOut(Schema):
     created_at: datetime
 
 
+class CodeIn(Schema):
+    code: str
+
+
+class PrizeOwnerOut(Schema):
+    telegram_id: int
+    first_name: str
+    username: str | None = None
+
+
+class PrizeCheckOut(Schema):
+    """Что видит менеджер, когда пробивает промокод."""
+
+    #: active — можно гасить, used — уже погашен, expired — просрочен.
+    status: str
+    prize: PrizeOut
+    owner: PrizeOwnerOut
+
+
 class PaymentIntentOut(Schema):
     payment_id: str
     confirmation_url: str

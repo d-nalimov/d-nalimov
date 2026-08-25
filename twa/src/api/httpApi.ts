@@ -87,7 +87,6 @@ export function createHttpApi(baseUrl: string): Api {
     getShop: () => request<ShopItem[]>('/shop'),
     buy: (itemId) => post<{ prize: Prize; moggs: number }>(`/shop/${encodeURIComponent(itemId)}/buy`),
     getPrizes: () => request<Prize[]>('/prizes'),
-    usePrize: (prizeId) => post<Prize>(`/prizes/${encodeURIComponent(prizeId)}/use`),
     getMoggsHistory: () => request<MoggsEntry[]>('/moggs/history'),
     createPayment: () => post<PaymentIntent>('/payments'),
     getPaymentStatus: (paymentId) =>

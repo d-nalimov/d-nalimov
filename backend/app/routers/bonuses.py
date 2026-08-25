@@ -1,10 +1,8 @@
-from datetime import datetime, timezone
-
 from fastapi import APIRouter
 from sqlalchemy import select
 
 from ..deps import CurrentUser, SessionDep, SettingsDep
-from ..errors import AppError, InsufficientFunds, NotFound
+from ..errors import InsufficientFunds, NotFound
 from ..models import MoggsEntry, Prize, ShopItem, WheelSector
 from ..schemas import (
     MoggsEntryOut,
@@ -94,26 +92,6 @@ async def list_prizes(session: SessionDep, user: CurrentUser) -> list[PrizeOut]:
         )
     ).all()
     return [PrizeOut.model_validate(prize) for prize in prizes]
-
-
-@router.post("/prizes/{prize_id}/use", response_model=PrizeOut)
-async def use_prize(prize_id: str, session: SessionDep, user: CurrentUser) -> PrizeOut:
-    """Промокод одноразовый: повторное гашение и просроченный код отбиваются здесь."""
-    prize = await session.get(Prize, prize_id)
-    if prize is None or prize.user_id != user.id:
-        raise NotFound("Приз не найден")
-    if prize.used_at is not None:
-        raise AppError("Промокод уже использован", code="already_used")
-
-    expires_at = prize.expires_at
-    if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if expires_at < datetime.now(timezone.utc):
-        raise AppError("Срок действия промокода истёк", code="expired")
-
-    prize.used_at = datetime.now(timezone.utc)
-    await session.commit()
-    return PrizeOut.model_validate(prize)
 
 
 @router.get("/moggs/history", response_model=list[MoggsEntryOut])

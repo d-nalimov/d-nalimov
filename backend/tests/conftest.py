@@ -15,6 +15,7 @@ os.environ.update(
     YOOKASSA_SHOP_ID="test-shop",
     YOOKASSA_SECRET_KEY="test-secret",
     YOOKASSA_RETURN_URL="https://t.me/test_bot/app",
+    ADMIN_TOKEN="test-admin-token",
 )
 
 import pytest  # noqa: E402
@@ -66,4 +67,21 @@ async def grant(telegram_id: int, *, moggs: int = 0, member: bool = False) -> No
         if member:
             user.status = "member"
             user.access_until = None
+        await session.commit()
+
+
+async def rewind_progress(telegram_id: int, lesson_id: str, seconds: int) -> None:
+    """Отматывает отметку последнего сохранения назад — эмулирует реальный просмотр."""
+    from datetime import timedelta
+
+    from sqlalchemy import select
+
+    from app.models import Progress, User, utcnow
+
+    async with SessionMaker() as session:
+        user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
+        progress = await session.scalar(
+            select(Progress).where(Progress.user_id == user.id, Progress.lesson_id == lesson_id)
+        )
+        progress.last_seen_at = utcnow() - timedelta(seconds=seconds)
         await session.commit()

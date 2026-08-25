@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter
 from sqlalchemy import select
 
@@ -28,8 +30,11 @@ async def save_progress(
 ) -> WatchResult:
     """Кэш таймкода и начисление моггсов за досмотр.
 
-    Награда считается здесь, а не на клиенте: клиент может прислать любую позицию,
-    но заплатим мы один раз и только за урок, который действительно досмотрен.
+    Клиент присылает позицию, но верить ей нельзя: одним запросом с позицией
+    в конец урока можно было бы забрать награду, не посмотрев ничего. Поэтому
+    сервер копит просмотренное время сам и засчитывает за раз не больше, чем
+    прошло реального времени с прошлого сохранения (с запасом на ускоренное
+    воспроизведение). Промотка вперёд позицию двигает, а просмотр — нет.
     """
     lesson = await session.get(Lesson, lesson_id)
     if lesson is None:
@@ -41,14 +46,38 @@ async def save_progress(
         select(Progress).where(Progress.user_id == user.id, Progress.lesson_id == lesson_id)
     )
     if progress is None:
-        progress = Progress(user_id=user.id, lesson_id=lesson_id)
+        # Значения по умолчанию проставляются при вставке, а считаем мы до неё —
+        # поэтому задаём их явно.
+        progress = Progress(
+            user_id=user.id,
+            lesson_id=lesson_id,
+            position_sec=0,
+            duration_sec=0,
+            watched_sec=0,
+            completed=False,
+            rewarded=False,
+        )
         session.add(progress)
 
-    duration = payload.duration_sec if payload.duration_sec > 0 else lesson.duration_sec
+    # Длительность берём из каталога: иначе клиент прислал бы «урок на 10 секунд»
+    # и выполнил условие досмотра одним запросом.
+    duration = lesson.duration_sec or payload.duration_sec
     position = max(0, min(payload.position_sec, duration or payload.position_sec))
 
+    now = datetime.now(timezone.utc)
+    last_seen = progress.last_seen_at
+    if last_seen is not None and last_seen.tzinfo is None:
+        last_seen = last_seen.replace(tzinfo=timezone.utc)
+    elapsed = (now - last_seen).total_seconds() if last_seen else 0.0
+
+    # Засчитываем только продвижение вперёд и не больше, чем позволяет
+    # реально прошедшее время.
+    advanced = max(0, position - progress.position_sec)
+    credited = min(advanced, elapsed * settings.max_playback_speed)
+    progress.watched_sec = min(duration or position, progress.watched_sec + int(credited))
+
     awarded = 0
-    completed = duration > 0 and position / duration >= settings.complete_ratio
+    completed = duration > 0 and progress.watched_sec / duration >= settings.complete_ratio
     if completed and not progress.rewarded:
         awarded = lesson.moggs_reward
         await add_moggs(session, user, awarded, f"Просмотр: {lesson.title}")
@@ -56,6 +85,7 @@ async def save_progress(
 
     progress.position_sec = position
     progress.duration_sec = duration
+    progress.last_seen_at = now
     progress.completed = progress.completed or completed
 
     await session.commit()

@@ -79,6 +79,11 @@ class Progress(Base):
     lesson_id: Mapped[str] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"), index=True)
     position_sec: Mapped[int] = mapped_column(Integer, default=0)
     duration_sec: Mapped[int] = mapped_column(Integer, default=0)
+    #: Сколько секунд урока действительно просмотрено. Растёт не быстрее реального
+    #: времени между запросами, поэтому промоткой её не накрутить.
+    watched_sec: Mapped[int] = mapped_column(Integer, default=0)
+    #: Время последнего сохранения прогресса — от него считаем допустимый прирост.
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed: Mapped[bool] = mapped_column(Boolean, default=False)
     #: Моггсы за этот урок уже начислены — второй раз не платим.
     rewarded: Mapped[bool] = mapped_column(Boolean, default=False)

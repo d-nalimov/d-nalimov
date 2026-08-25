@@ -1,18 +1,16 @@
 import type { Prize } from '../api/types'
 import { daysLeft, formatDate, plural } from '../lib/format'
 import { copyText, haptic, openTelegram } from '../telegram/sdk'
-import { CheckIcon, CopyIcon, SendIcon } from './icons'
+import { CopyIcon, SendIcon } from './icons'
 
 export function PromoCard({
   prize,
   managerUsername,
   onCopied,
-  onUse,
 }: {
   prize: Prize
   managerUsername: string
   onCopied: () => void
-  onUse: (prize: Prize) => void
 }) {
   const expired = new Date(prize.expiresAt).getTime() < Date.now()
   const used = Boolean(prize.usedAt)
@@ -58,25 +56,21 @@ export function PromoCard({
         </span>
       </div>
 
+      {/* Гасит промокод менеджер на своей стороне — пользователь только присылает код. */}
       {!inactive ? (
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            className="btn btn--accent"
-            style={{ flex: 1 }}
-            onClick={() => {
-              haptic.press()
-              openTelegram(`https://t.me/${managerUsername}?text=${encodeURIComponent(`Промокод ${prize.code}`)}`)
-            }}
-            type="button"
-          >
-            <SendIcon size={18} />
-            Менеджеру
-          </button>
-          <button className="btn btn--ghost" onClick={() => onUse(prize)} type="button">
-            <CheckIcon size={18} />
-            Использован
-          </button>
-        </div>
+        <button
+          className="btn btn--accent btn--block"
+          onClick={() => {
+            haptic.press()
+            openTelegram(
+              `https://t.me/${managerUsername}?text=${encodeURIComponent(`Промокод ${prize.code}`)}`,
+            )
+          }}
+          type="button"
+        >
+          <SendIcon size={18} />
+          Отправить менеджеру
+        </button>
       ) : null}
     </div>
   )

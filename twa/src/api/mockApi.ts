@@ -25,9 +25,18 @@ const STORAGE_KEY = 'cashyou.mock.v1'
 /** Доля просмотра, после которой урок считается пройденным и начисляются моггсы. */
 const COMPLETE_RATIO = 0.9
 
+/** Во сколько раз быстрее реального времени разрешено засчитывать просмотр. */
+const MAX_PLAYBACK_SPEED = 2.5
+
+interface MockProgress extends LessonProgress {
+  /** Служебные поля мока: столько просмотрено и когда последний раз сохраняли. */
+  watchedSec: number
+  lastSeenAt: number
+}
+
 interface MockState {
   user: User
-  progress: Record<string, LessonProgress>
+  progress: Record<string, MockProgress>
   favorites: string[]
   prizes: Prize[]
   history: MoggsEntry[]
@@ -190,8 +199,19 @@ export const mockApi: Api = {
     if (!lesson) throw new ApiError('Урок не найден', 404, 'not_found')
 
     const prev = state.progress[lessonId]
-    const completed = durationSec > 0 && positionSec / durationSec >= COMPLETE_RATIO
+    // Длительность берём из каталога, а просмотренное копим сами и не быстрее
+    // реального времени — те же правила, что и на сервере.
+    const duration = lesson.durationSec || durationSec
+    const position = Math.max(0, Math.min(Math.round(positionSec), duration || positionSec))
+
+    const now = Date.now()
+    const elapsed = prev?.lastSeenAt ? (now - prev.lastSeenAt) / 1000 : 0
+    const advanced = Math.max(0, position - (prev?.positionSec ?? 0))
+    const credited = Math.min(advanced, elapsed * MAX_PLAYBACK_SPEED)
+    const watched = Math.min(duration || position, (prev?.watchedSec ?? 0) + Math.round(credited))
+
     const rewarded = prev?.rewarded ?? false
+    const completed = duration > 0 && watched / duration >= COMPLETE_RATIO
     let awarded = 0
 
     if (completed && !rewarded) {
@@ -201,8 +221,10 @@ export const mockApi: Api = {
 
     state.progress[lessonId] = {
       lessonId,
-      positionSec: Math.max(0, Math.round(positionSec)),
-      durationSec: Math.round(durationSec),
+      positionSec: position,
+      durationSec: duration,
+      watchedSec: watched,
+      lastSeenAt: now,
       completed: completed || Boolean(prev?.completed),
       rewarded: rewarded || awarded > 0,
       updatedAt: new Date().toISOString(),
@@ -280,17 +302,6 @@ export const mockApi: Api = {
     return delay([...state.prizes])
   },
 
-  async usePrize(prizeId: string): Promise<Prize> {
-    const prize = state.prizes.find((p) => p.id === prizeId)
-    if (!prize) throw new ApiError('Приз не найден', 404, 'not_found')
-    if (prize.usedAt) throw new ApiError('Промокод уже использован', 400, 'already_used')
-    if (new Date(prize.expiresAt).getTime() < Date.now()) {
-      throw new ApiError('Срок действия промокода истёк', 400, 'expired')
-    }
-    prize.usedAt = new Date().toISOString()
-    save()
-    return { ...prize }
-  },
 
   async getMoggsHistory(): Promise<MoggsEntry[]> {
     return delay([...state.history])

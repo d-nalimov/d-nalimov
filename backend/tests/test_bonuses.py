@@ -1,10 +1,3 @@
-from datetime import datetime, timedelta, timezone
-
-from sqlalchemy import select
-
-from app.db import SessionMaker
-from app.models import Prize
-
 from .conftest import auth_header, grant
 
 
@@ -71,53 +64,3 @@ async def test_buy_without_moggs_is_rejected(client):
 
     assert response.status_code == 400
     assert response.json()["code"] == "insufficient_funds"
-
-
-async def test_promo_is_single_use(client):
-    tg = 700305
-    headers = auth_header(tg)
-    await client.post("/auth", headers=headers)
-    await grant(tg, moggs=300)
-
-    prize = (await client.post("/shop/s2/buy", headers=headers)).json()["prize"]
-
-    used = await client.post(f"/prizes/{prize['id']}/use", headers=headers)
-    assert used.status_code == 200
-    assert used.json()["usedAt"] is not None
-
-    again = await client.post(f"/prizes/{prize['id']}/use", headers=headers)
-    assert again.status_code == 400
-    assert again.json()["code"] == "already_used"
-
-
-async def test_expired_promo_cannot_be_used(client):
-    tg = 700306
-    headers = auth_header(tg)
-    await client.post("/auth", headers=headers)
-    await grant(tg, moggs=300)
-
-    prize = (await client.post("/shop/s2/buy", headers=headers)).json()["prize"]
-
-    async with SessionMaker() as session:
-        row = await session.scalar(select(Prize).where(Prize.id == prize["id"]))
-        row.expires_at = datetime.now(timezone.utc) - timedelta(days=1)
-        await session.commit()
-
-    response = await client.post(f"/prizes/{prize['id']}/use", headers=headers)
-
-    assert response.status_code == 400
-    assert response.json()["code"] == "expired"
-
-
-async def test_foreign_promo_is_not_visible(client):
-    owner, stranger = 700307, 700308
-    owner_headers, stranger_headers = auth_header(owner), auth_header(stranger)
-    await client.post("/auth", headers=owner_headers)
-    await client.post("/auth", headers=stranger_headers)
-    await grant(owner, moggs=300)
-
-    prize = (await client.post("/shop/s2/buy", headers=owner_headers)).json()["prize"]
-
-    response = await client.post(f"/prizes/{prize['id']}/use", headers=stranger_headers)
-
-    assert response.status_code == 404

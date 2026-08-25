@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import get_settings
 from .db import create_all
 from .errors import AppError, app_error_handler
-from .routers import auth, bonuses, catalog, curators, library, payments
+from .routers import admin, auth, bonuses, catalog, curators, library, payments
 
 logger = logging.getLogger("cashyou")
 
@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
 
     app.add_exception_handler(AppError, app_error_handler)
 
-    for module in (auth, catalog, library, curators, bonuses, payments):
+    for module in (auth, catalog, library, curators, bonuses, payments, admin):
         app.include_router(module.router)
 
     @app.get("/health", include_in_schema=False)

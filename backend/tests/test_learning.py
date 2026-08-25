@@ -1,4 +1,4 @@
-from .conftest import auth_header, grant
+from .conftest import auth_header, grant, rewind_progress
 
 TG = 700200
 
@@ -28,23 +28,58 @@ async def test_paid_lesson_opens_for_member(client):
     assert response.json()["categoryId"] == "skin"
 
 
-async def test_moggs_are_paid_once_and_only_for_watched_lesson(client):
+async def test_reward_needs_real_watch_time(client):
+    """Одним запросом «я досмотрел» награду не получить."""
     tg = 700202
     headers = auth_header(tg)
     await client.post("/auth", headers=headers)
 
-    # Половина урока — награды нет, но таймкод сохраняется.
-    half = await client.post(
-        "/lessons/start-1/progress", headers=headers, json={"positionSec": 300, "durationSec": 605}
+    instant = await client.post(
+        "/lessons/start-1/progress", headers=headers, json={"positionSec": 605, "durationSec": 605}
     )
-    assert half.json() == {"moggs": 0, "awarded": 0}
 
-    done = await client.post(
-        "/lessons/start-1/progress", headers=headers, json={"positionSec": 600, "durationSec": 605}
+    assert instant.json() == {"moggs": 0, "awarded": 0}
+
+
+async def test_short_duration_from_client_is_ignored(client):
+    """Клиент присылает «урок на 10 секунд» — длительность берётся из каталога."""
+    tg = 700203
+    headers = auth_header(tg)
+    await client.post("/auth", headers=headers)
+
+    await client.post(
+        "/lessons/start-1/progress", headers=headers, json={"positionSec": 1, "durationSec": 10}
     )
-    assert done.json() == {"moggs": 40, "awarded": 40}
+    await rewind_progress(tg, "start-1", 60)
+    result = await client.post(
+        "/lessons/start-1/progress", headers=headers, json={"positionSec": 10, "durationSec": 10}
+    )
 
-    # Повторный «досмотр» того же урока ничего не начисляет.
+    assert result.json()["awarded"] == 0
+    progress = (await client.get("/progress", headers=headers)).json()
+    assert progress["start-1"]["durationSec"] == 605
+
+
+async def test_moggs_are_paid_once_after_watching(client):
+    tg = 700204
+    headers = auth_header(tg)
+    await client.post("/auth", headers=headers)
+
+    # Смотрим урок кусками: каждый раз отматываем отметку назад, как будто время шло.
+    position = 0
+    while position < 605:
+        position = min(position + 60, 605)
+        await client.post(
+            "/lessons/start-1/progress",
+            headers=headers,
+            json={"positionSec": position, "durationSec": 605},
+        )
+        await rewind_progress(tg, "start-1", 60)
+
+    balance = (await client.post("/auth", headers=headers)).json()["user"]["moggs"]
+    assert balance == 40
+
+    # Повторный «досмотр» ничего не начисляет.
     again = await client.post(
         "/lessons/start-1/progress", headers=headers, json={"positionSec": 605, "durationSec": 605}
     )
@@ -52,11 +87,31 @@ async def test_moggs_are_paid_once_and_only_for_watched_lesson(client):
 
     progress = (await client.get("/progress", headers=headers)).json()
     assert progress["start-1"]["completed"] is True
-    assert progress["start-1"]["positionSec"] == 605
+
+
+async def test_seeking_ahead_does_not_count_as_watching(client):
+    """Промотка двигает таймкод, но просмотром не считается."""
+    tg = 700205
+    headers = auth_header(tg)
+    await client.post("/auth", headers=headers)
+
+    await client.post(
+        "/lessons/start-2/progress", headers=headers, json={"positionSec": 5, "durationSec": 670}
+    )
+    await rewind_progress(tg, "start-2", 10)
+    result = await client.post(
+        "/lessons/start-2/progress", headers=headers, json={"positionSec": 660, "durationSec": 670}
+    )
+
+    assert result.json()["awarded"] == 0
+    progress = (await client.get("/progress", headers=headers)).json()
+    # Таймкод сохранён для продолжения, но засчитано только реально просмотренное.
+    assert progress["start-2"]["positionSec"] == 660
+    assert progress["start-2"]["completed"] is False
 
 
 async def test_progress_on_paid_lesson_requires_access(client):
-    tg = 700203
+    tg = 700206
     headers = auth_header(tg)
     await client.post("/auth", headers=headers)
 
@@ -68,7 +123,7 @@ async def test_progress_on_paid_lesson_requires_access(client):
 
 
 async def test_position_cannot_exceed_duration(client):
-    tg = 700204
+    tg = 700207
     headers = auth_header(tg)
     await client.post("/auth", headers=headers)
 
@@ -83,7 +138,7 @@ async def test_position_cannot_exceed_duration(client):
 
 
 async def test_favorites_toggle(client):
-    tg = 700205
+    tg = 700208
     headers = auth_header(tg)
     await client.post("/auth", headers=headers)
 
@@ -100,7 +155,7 @@ async def test_favorites_toggle(client):
 
 
 async def test_favorites_are_per_user(client):
-    first, second = auth_header(700206), auth_header(700207)
+    first, second = auth_header(700209), auth_header(700210)
     await client.post("/auth", headers=first)
     await client.post("/auth", headers=second)
 
@@ -110,7 +165,7 @@ async def test_favorites_are_per_user(client):
 
 
 async def test_categories_carry_lesson_counts(client):
-    headers = auth_header(700208)
+    headers = auth_header(700211)
     await client.post("/auth", headers=headers)
 
     categories = (await client.get("/categories", headers=headers)).json()

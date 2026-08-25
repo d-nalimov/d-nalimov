@@ -35,6 +35,13 @@ class Settings(BaseSettings):
     #: Доля просмотра, после которой урок засчитывается и начисляются моггсы.
     complete_ratio: float = 0.9
 
+    #: Во сколько раз быстрее реального времени разрешено засчитывать просмотр.
+    #: Запас на ускоренное воспроизведение и задержки сети.
+    max_playback_speed: float = 2.5
+
+    #: Токен для гашения промокодов менеджером. Пуст — раздел выключен.
+    admin_token: str = ""
+
     @property
     def is_production(self) -> bool:
         return self.env.lower() in {"production", "prod"}
@@ -42,6 +49,10 @@ class Settings(BaseSettings):
     @property
     def origins(self) -> list[str]:
         return [item.strip() for item in self.allowed_origins.split(",") if item.strip()]
+
+    @property
+    def admin_enabled(self) -> bool:
+        return bool(self.admin_token)
 
     @property
     def payments_enabled(self) -> bool:
