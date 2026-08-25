@@ -128,7 +128,7 @@
   object-fit: cover;
 }
 
-.tile__label {
+.caps-label {
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;

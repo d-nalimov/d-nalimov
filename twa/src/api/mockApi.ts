@@ -35,7 +35,7 @@ interface MockState {
 }
 
 const config: AppConfig = {
-  priceAmount: 499000,
+  priceAmount: 299000,
   priceCurrency: 'RUB',
   spinCost: 100,
   promoTtlDays: 30,

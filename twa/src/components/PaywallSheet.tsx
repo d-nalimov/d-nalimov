@@ -66,7 +66,7 @@ export function PaywallSheet({ onClose }: { onClose: () => void }) {
         Полный доступ к клубу
       </h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        Разовая оплата — доступ ко всей базе материалов остаётся навсегда.
+        Ежемесячная оплата, и вся база материалов открывается навсегда.
       </p>
 
       <div className="stack" style={{ margin: '18px 0' }}>

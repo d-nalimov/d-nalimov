@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     allowed_origins: str = "*"
     database_url: str = "sqlite+aiosqlite:///./cashyou.db"
 
-    price_amount: int = 499_000
+    price_amount: int = 299_000
     price_currency: str = "RUB"
 
     spin_cost: int = 100

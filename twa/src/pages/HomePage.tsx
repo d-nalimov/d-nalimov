@@ -41,7 +41,7 @@ export function HomePage() {
           <span className="tile__box">
             <LibraryIcon size={26} />
           </span>
-          <span className="tile__label">База материалов</span>
+          <span className="caps-label">База материалов</span>
         </button>
         <button
           className="tile"
@@ -54,7 +54,7 @@ export function HomePage() {
           <span className="tile__box">
             <UsersIcon size={26} />
           </span>
-          <span className="tile__label">Кураторы</span>
+          <span className="caps-label">Кураторы</span>
         </button>
         <button
           className="tile"
@@ -67,7 +67,7 @@ export function HomePage() {
           <span className="tile__box">
             <ChatIcon size={26} />
           </span>
-          <span className="tile__label">Сообщество</span>
+          <span className="caps-label">Сообщество</span>
         </button>
       </div>
 
