@@ -581,13 +581,6 @@
   line-height: 1;
   font-weight: 600;
   margin-top: 2px;
-  animation: value-bump var(--dur-slow) var(--ease);
-}
-
-@keyframes value-bump {
-  30% {
-    transform: scale(1.08);
-  }
 }
 
 /* Товар магазина: картинка слева, цена и действие справа. */
