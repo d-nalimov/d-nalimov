@@ -30,10 +30,10 @@ export const HomeIcon = (p: IconProps) => (
 
 export const UsersIcon = (p: IconProps) => (
   <Icon {...p}>
-    <circle cx="9" cy="8" r="3.2" />
-    <path d="M3 20c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2" />
-    <path d="M16.5 11.2a3 3 0 0 0 0-6" />
-    <path d="M18 20c0-2.6-1-4.3-2.6-5.2" />
+    <circle cx="9.2" cy="8.4" r="3.4" />
+    <path d="M2.8 20c0-3.5 2.9-5.7 6.4-5.7s6.4 2.2 6.4 5.7" />
+    <circle cx="17.5" cy="9.4" r="2.4" />
+    <path d="M16.4 14.7c2.9.6 4.8 2.6 4.8 5.3" />
   </Icon>
 )
 
@@ -165,9 +165,8 @@ export const SendIcon = (p: IconProps) => (
 
 export const LibraryIcon = (p: IconProps) => (
   <Icon {...p}>
-    <path d="M5 4.5h4.2v15H5z" />
-    <path d="M10.8 4.5H15v15h-4.2z" />
-    <path d="m16.6 5.4 3 .8-3.4 13.1-2.2-.6" />
+    <rect x="3" y="5" width="18" height="14" rx="2.6" />
+    <path d="M10.5 9.8v4.4l3.9-2.2z" />
   </Icon>
 )
 
