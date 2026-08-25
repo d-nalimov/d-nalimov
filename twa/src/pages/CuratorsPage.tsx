@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { EmptyState, Screen, SearchInput, Skeleton } from '../components/ui'
 import { ChevronRight, SearchIcon } from '../components/icons'
-import { initials } from '../lib/format'
 import { haptic, openTelegram } from '../telegram/sdk'
 import { useBackButton } from '../telegram/useTelegram'
 import { useAppStore } from '../store/useAppStore'
@@ -50,17 +49,8 @@ export function CuratorsPage() {
               {curator.photoUrl ? (
                 <img className="row__avatar" src={curator.photoUrl} alt="" loading="lazy" />
               ) : (
-                <div
-                  className="row__avatar"
-                  style={{
-                    display: 'grid',
-                    placeItems: 'center',
-                    color: 'var(--text)',
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  {initials(curator.name.split(' ')[0], curator.name.split(' ')[1])}
-                </div>
+                // Пока фото нет — пустой кружок, ждёт реальную картинку.
+                <div className="row__avatar" />
               )}
 
               <div className="row__body">
