@@ -778,32 +778,6 @@
   }
 }
 
-.wheel-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-  margin-top: 16px;
-}
-
-.wheel-legend__item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-dim);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 5px 10px;
-}
-
-.wheel-legend__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-}
-
 /* Список уроков: внутри группы (карточка + материалы) отступ меньше,
    чем между самими уроками — иначе кнопка «прилипает» к следующему. */
 .lesson-list {

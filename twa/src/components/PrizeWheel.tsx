@@ -146,17 +146,3 @@ function shade(hex: string, amount: number): string {
   return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`
 }
 
-export function WheelLegend({ sectors }: { sectors: WheelSector[] }) {
-  return (
-    <div className="wheel-legend">
-      {sectors
-        .filter((s) => !s.blank)
-        .map((sector) => (
-          <span className="wheel-legend__item" key={sector.id}>
-            <span className="wheel-legend__dot" style={{ background: sector.color }} />
-            {sector.label}
-          </span>
-        ))}
-    </div>
-  )
-}

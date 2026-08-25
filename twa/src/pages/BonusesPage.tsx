@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api'
 import type { Prize } from '../api/types'
 import { ApiError } from '../api/types'
-import { PrizeWheel, WheelLegend } from '../components/PrizeWheel'
+import { PrizeWheel } from '../components/PrizeWheel'
 import { PromoCard } from '../components/PromoCard'
 import { EmptyState, Screen, Segmented, Sheet, Skeleton } from '../components/ui'
 import { ChevronRight, GiftIcon, HistoryIcon, InfoIcon, TicketIcon } from '../components/icons'
@@ -168,7 +168,6 @@ export function BonusesPage() {
               >
                 {spinning ? 'Крутим...' : `Крутить за ${spinCost} моггсов`}
               </button>
-              <WheelLegend sectors={wheel} />
               <p className="muted" style={{ fontSize: 12, textAlign: 'center' }}>
                 Приз приходит промокодом и действует {config?.promoTtlDays ?? 30}{' '}
                 {plural(config?.promoTtlDays ?? 30, 'день', 'дня', 'дней')}.
