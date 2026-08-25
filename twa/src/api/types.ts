@@ -77,8 +77,9 @@ export interface Curator {
   name: string
   username: string
   role: string
-  about: string
   photoUrl?: string
+  /** Поля ниже сервер ещё отдаёт, но список их не показывает. */
+  about?: string
   tag?: string
 }
 

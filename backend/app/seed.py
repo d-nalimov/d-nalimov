@@ -6,6 +6,7 @@
 
 import asyncio
 
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .db import SessionMaker, create_all
@@ -54,14 +55,14 @@ LESSONS = [
 ]
 
 CURATORS = [
-    ("c1", "Алина Ким", "alina_curator", "Куратор по уходу за кожей",
-     "Косметолог-эстетист, 7 лет практики. Ведёт разборы рутины и подбирает уход под задачу.", "Топ-куратор"),
-    ("c2", "Никита Бельков", "nikita_curator", "Куратор по телу и питанию",
-     "Тренер, специализация — рекомпозиция. Собирает планы питания и тренировок под уровень.", None),
-    ("c3", "Тимофей Луга", "timofey_curator", "Куратор по стилю",
-     "Стилист, работает с личным брендом. Разбирает гардероб и подачу в кадре.", None),
-    ("c4", "Даниил Нал", "daniil_curator", "Куратор по мьюингу",
-     "Ортодонт-консультант. Ведёт блок про челюсть, осанку и дыхание.", "Топ-куратор"),
+    ("nalimov", "Налимов", "nalimov", "Создатель ПИК. Писать по важным вопросам."),
+    ("kostya", "Костя", "kostya_fit", "Эксперт по фитнесу и сушке"),
+    (
+        "brunello",
+        "Даня Брунелло",
+        "danya_brunello",
+        "Скаут в модельном агентстве. Помогает понять базу и начать путь в моделинге.",
+    ),
 ]
 
 # Цвета секторов — шкала редкости: серый обычный → зелёный → синий → фиолетовый
@@ -113,11 +114,17 @@ async def seed(session: AsyncSession) -> None:
         lesson.materials_url = MATERIALS_URL
         session.add(lesson)
 
-    for order, (cid, name, username, role, about, tag) in enumerate(CURATORS):
+    for order, (cid, name, username, role) in enumerate(CURATORS):
         curator = await session.get(Curator, cid) or Curator(id=cid)
         curator.name, curator.username, curator.role = name, username, role
-        curator.about, curator.tag, curator.sort_order = about, tag, order
+        curator.active, curator.sort_order = True, order
         session.add(curator)
+
+    # Кураторов, которых больше нет в списке, скрываем: иначе после замены
+    # состава старые записи остались бы висеть в приложении.
+    await session.execute(
+        update(Curator).where(Curator.id.not_in([c[0] for c in CURATORS])).values(active=False)
+    )
 
     for order, (sid, label, color, blank, kind, moggs, weight) in enumerate(WHEEL):
         sector = await session.get(WheelSector, sid) or WheelSector(id=sid)
