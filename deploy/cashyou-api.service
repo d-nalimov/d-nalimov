@@ -1,0 +1,24 @@
+# Юнит для API мини-приложения. Ставить в /etc/systemd/system/cashyou-api.service,
+# затем: systemctl enable --now cashyou-api
+
+[Unit]
+Description=Cashyou mini app API
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=cashyou
+WorkingDirectory=/srv/cashyou/backend
+EnvironmentFile=/srv/cashyou/backend/.env
+ExecStart=/srv/cashyou/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+
+# Процессу нужны только свои файлы.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

@@ -138,14 +138,24 @@ curl -X POST https://<домен>/admin/prizes/lookup \
 
 ## Деплой
 
+Порядок установки на looksmaxx.ru — в `../deploy/README.md`, там же конфиг nginx
+и юнит systemd. Приложение и его API живут на одном домене разными путями:
+`/web/` и `/api/`.
+
+Через Docker:
+
 ```bash
 docker build -t cashyou-api .
 docker run -p 8000:8000 --env-file .env cashyou-api
 ```
 
 На проде: `ENV=production`, `DATABASE_URL` на PostgreSQL (`postgresql+asyncpg://`),
-`ALLOWED_ORIGINS` — домен мини-приложения (звёздочка запрещена), адрес вебхука
-`https://<домен>/payments/webhook` указывается в личном кабинете ЮKassa.
+`ROOT_PATH=/api` (путь срезает nginx, приложению он нужен для `/docs` и схемы),
+адрес вебхука `https://<домен>/api/payments/webhook` указывается в личном
+кабинете ЮKassa.
+
+Когда фронт и API на одном домене, межсайтовых запросов нет и CORS не участвует;
+`ALLOWED_ORIGINS` остаётся страховкой на случай выноса фронта на отдельный адрес.
 
 Схема сейчас создаётся через `Base.metadata.create_all` на старте. Для боевой
 эксплуатации следующий шаг — Alembic: миграции нужны, как только таблицы начнут

@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     yookassa_secret_key: str = ""
     yookassa_return_url: str = ""
 
+    #: Префикс, под которым приложение видно снаружи (например /api).
+    #: Сам путь срезает nginx, здесь он нужен только для /docs и схемы.
+    root_path: str = ""
+
     env: str = "development"
     auth_dev_mode: bool = False
 
