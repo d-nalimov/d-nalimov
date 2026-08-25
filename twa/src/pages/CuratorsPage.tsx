@@ -21,10 +21,7 @@ export function CuratorsPage() {
     const q = query.trim().toLowerCase()
     if (!q) return curators
     return curators.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.role.toLowerCase().includes(q) ||
-        c.username.toLowerCase().includes(q),
+      (c) => c.name.toLowerCase().includes(q) || c.role.toLowerCase().includes(q),
     )
   }, [curators, query])
 
@@ -66,10 +63,6 @@ export function CuratorsPage() {
                   ) : null}
                 </div>
                 <div className="row__role">{curator.role}</div>
-                <div className="row__text">{curator.about}</div>
-                <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-                  @{curator.username}
-                </div>
               </div>
 
               <button
