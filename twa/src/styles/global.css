@@ -105,29 +105,36 @@ img {
   margin: 26px 0 12px;
 }
 
-/* Шапка раздела: шеврон слева, под заголовком — родительский экран. */
+/* Шапка раздела: стрелка живёт внутри заголовка и садится на его базовую линию.
+   Так выравнивание не зависит от метрик шрифта — если Oswald не подгрузился,
+   подменный шрифт положит текст иначе, но стрелка уедет вместе с ним. */
 .subhead {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 2px 0 16px;
-}
-
-.subhead__back {
-  flex: none;
-  /* Оптически совмещаем шеврон с первой строкой заголовка, а не с блоком целиком:
-     у двухстрочных названий центрирование по высоте уводит его вниз. */
-  padding: 1px 2px 0 0;
-  color: var(--text);
-}
-
-.subhead__title {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 26px;
-  line-height: 1;
+  line-height: 1.15;
   letter-spacing: 0.01em;
   text-transform: uppercase;
+  margin: 2px 0 16px;
+  /* Висячий отступ: стрелка выступает влево, перенос строки встаёт под текст. */
+  padding-left: 30px;
+  text-indent: -30px;
+}
+
+.subhead__back {
+  display: inline-flex;
+  /* Базовая линия inline-flex берётся у SVG — его низ встаёт на базовую линию строки. */
+  vertical-align: baseline;
+  position: relative;
+  margin-right: 10px;
+  color: var(--text);
+}
+
+/* Палец попадает по стрелке, не задевая заголовок. */
+.subhead__back::after {
+  content: '';
+  position: absolute;
+  inset: -12px -10px;
 }
 
 .muted {

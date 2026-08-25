@@ -54,12 +54,12 @@ export function CategoryPage() {
 
   return (
     <Screen>
-      <div className="subhead">
+      <h1 className="subhead">
         <button className="subhead__back" onClick={() => navigate('/')} type="button" aria-label="Назад">
           <ChevronLeft size={20} />
         </button>
-        <h1 className="subhead__title">{category?.title ?? 'Категория'}</h1>
-      </div>
+        {category?.title ?? 'Категория'}
+      </h1>
 
       <SearchInput value={query} onChange={setQuery} />
 
