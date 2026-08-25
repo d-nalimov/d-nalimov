@@ -26,7 +26,6 @@ export function LessonCard({
 
   const meta = [
     formatDuration(lesson.durationSec),
-    lesson.free ? 'Бесплатно' : null,
     progress?.completed
       ? 'Пройден'
       : progress && progress.positionSec > 5
