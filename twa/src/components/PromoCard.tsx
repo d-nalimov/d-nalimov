@@ -48,12 +48,9 @@ export function PromoCard({
       </div>
 
       <div className="promo__meta">
-        <span>{prize.source === 'wheel' ? 'Выигрыш на колесе' : 'Покупка за моггсы'}</span>
-        <span>
-          {used
-            ? `отмечен ${formatDate(prize.usedAt as string)}`
-            : `действует до ${formatDate(prize.expiresAt)}`}
-        </span>
+        {used
+          ? `Отмечен ${formatDate(prize.usedAt as string)}`
+          : `Действует до ${formatDate(prize.expiresAt)}`}
       </div>
 
       {/* Гасит промокод менеджер на своей стороне — пользователь только присылает код.

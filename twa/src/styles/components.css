@@ -679,9 +679,8 @@
 }
 
 .promo__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
+  /* Одна строка под кодом, по центру карточки — заодно и по центру кнопки. */
+  text-align: center;
   font-size: 12px;
   color: var(--text-mute);
 }
