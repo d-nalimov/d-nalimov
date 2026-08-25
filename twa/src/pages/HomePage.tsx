@@ -73,10 +73,7 @@ export function HomePage() {
 
       {!access ? (
         <div className="card" style={{ marginTop: 16 }}>
-          <div style={{ fontWeight: 700, marginBottom: 4 }}>Открыт бесплатный блок</div>
-          <div className="muted" style={{ fontSize: 13 }}>
-            Посмотри вводные уроки, а полный доступ откроется одной разовой оплатой.
-          </div>
+          <div style={{ fontWeight: 700 }}>Открыт бесплатный блок</div>
           <button
             className="btn btn--accent btn--block"
             style={{ marginTop: 12 }}

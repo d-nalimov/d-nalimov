@@ -32,11 +32,7 @@ export function CuratorsPage() {
     <Screen title="Кураторы">
       <SearchInput value={query} onChange={setQuery} placeholder="Имя или направление" />
 
-      <p className="muted" style={{ fontSize: 13, marginTop: 14 }}>
-        Выбери куратора по своей задаче — откроется личный чат в Telegram.
-      </p>
-
-      <div className="card" style={{ padding: '0 16px', marginTop: 8 }}>
+      <div className="card" style={{ padding: '0 16px', marginTop: 14 }}>
         {!curators.length ? (
           <div style={{ padding: '14px 0' }}>
             <Skeleton height={64} />

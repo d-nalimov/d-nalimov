@@ -74,7 +74,6 @@ export function FavoritesPage() {
         <EmptyState
           icon={<HeartIcon size={30} />}
           title="Нет избранных уроков"
-          hint="Нажми на сердечко у любого урока — он появится здесь"
           action={
             <button className="btn btn--accent" onClick={() => navigate('/')} type="button">
               В базу материалов
