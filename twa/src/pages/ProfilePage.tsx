@@ -49,7 +49,7 @@ export function ProfilePage() {
             материалов открывается навсегда.
           </div>
           <button
-            className="btn btn--accent btn--block"
+            className="btn btn--gold btn--block"
             style={{ marginTop: 12 }}
             onClick={() => setPaywall(true)}
             type="button"
