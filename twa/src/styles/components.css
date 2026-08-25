@@ -794,6 +794,7 @@
      текст останется видимым, а не пропадёт вместе с прозрачной заливкой. */
   color: #f0c463;
   font-weight: 700;
+  text-align: center;
   filter: drop-shadow(0 0 9px rgba(240, 196, 99, 0.4));
   animation: gold-pulse 3.6s ease-in-out infinite;
 }
@@ -815,4 +816,10 @@
   50% {
     filter: drop-shadow(0 0 13px rgba(240, 196, 99, 0.55));
   }
+}
+
+/* Золотая кнопка — под золотым заголовком: тёмный янтарь с тёмным текстом. */
+.btn--gold {
+  background: linear-gradient(180deg, #dfa93a 0%, #c08c22 55%, #a97614 100%);
+  color: #171003;
 }

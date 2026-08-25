@@ -75,7 +75,7 @@ export function HomePage() {
         <div className="card" style={{ marginTop: 16 }}>
           <div className="gold">Открыт бесплатный блок</div>
           <button
-            className="btn btn--accent btn--block"
+            className="btn btn--gold btn--block"
             style={{ marginTop: 12 }}
             onClick={() => setPaywall(true)}
             type="button"
