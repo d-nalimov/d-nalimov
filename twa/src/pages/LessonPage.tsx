@@ -114,11 +114,9 @@ export function LessonPage() {
         <button className="subhead__back" onClick={() => navigate(-1)} type="button" aria-label="Назад">
           <ChevronLeft size={20} />
         </button>
-        <div>
-          <h1 className="subhead__title" style={{ fontSize: 22 }}>
+        <h1 className="subhead__title" style={{ fontSize: 22 }}>
             {lesson.title}
           </h1>
-        </div>
       </div>
 
       <LessonPlayer lesson={lesson} startAt={startAt.current} onProgress={onProgress} />

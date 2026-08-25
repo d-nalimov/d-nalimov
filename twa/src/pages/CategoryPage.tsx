@@ -58,10 +58,7 @@ export function CategoryPage() {
         <button className="subhead__back" onClick={() => navigate('/')} type="button" aria-label="Назад">
           <ChevronLeft size={20} />
         </button>
-        <div>
-          <h1 className="subhead__title">{category?.title ?? 'Категория'}</h1>
-          <div className="subhead__parent">Главная</div>
-        </div>
+        <h1 className="subhead__title">{category?.title ?? 'Категория'}</h1>
       </div>
 
       <SearchInput value={query} onChange={setQuery} />

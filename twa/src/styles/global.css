@@ -115,7 +115,9 @@ img {
 
 .subhead__back {
   flex: none;
-  padding: 2px 2px 0 0;
+  /* Оптически совмещаем шеврон с первой строкой заголовка, а не с блоком целиком:
+     у двухстрочных названий центрирование по высоте уводит его вниз. */
+  padding: 1px 2px 0 0;
   color: var(--text);
 }
 
@@ -126,12 +128,6 @@ img {
   line-height: 1;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-}
-
-.subhead__parent {
-  color: var(--text-mute);
-  font-size: 13px;
-  margin-top: 5px;
 }
 
 .muted {
