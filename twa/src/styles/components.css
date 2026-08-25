@@ -786,3 +786,33 @@
   gap: 20px;
   margin-top: 14px;
 }
+
+/* ---------- Золотая надпись ---------- */
+
+.gold {
+  /* База — сплошное золото: если background-clip: text не поддержан,
+     текст останется видимым, а не пропадёт вместе с прозрачной заливкой. */
+  color: #f0c463;
+  font-weight: 700;
+  filter: drop-shadow(0 0 9px rgba(240, 196, 99, 0.4));
+  animation: gold-pulse 3.6s ease-in-out infinite;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .gold {
+    background: linear-gradient(172deg, #fff3cb 0%, #f3c85f 42%, #c9922c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@keyframes gold-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 7px rgba(240, 196, 99, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 13px rgba(240, 196, 99, 0.55));
+  }
+}

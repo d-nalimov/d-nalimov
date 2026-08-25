@@ -73,7 +73,7 @@ export function HomePage() {
 
       {!access ? (
         <div className="card" style={{ marginTop: 16 }}>
-          <div style={{ fontWeight: 700 }}>Открыт бесплатный блок</div>
+          <div className="gold">Открыт бесплатный блок</div>
           <button
             className="btn btn--accent btn--block"
             style={{ marginTop: 12 }}
