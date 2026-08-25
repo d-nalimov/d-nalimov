@@ -28,6 +28,13 @@ const COMPLETE_RATIO = 0.9
 /** Во сколько раз быстрее реального времени разрешено засчитывать просмотр. */
 const MAX_PLAYBACK_SPEED = 2.5
 
+/**
+ * Стартовый баланс в демо-режиме — чтобы колесо и магазин можно было щёлкать
+ * сразу, не досматривая уроки. На бэкенде такого начисления нет: там баланс
+ * растёт только за просмотр.
+ */
+const DEMO_MOGGS = 9999
+
 interface MockProgress extends LessonProgress {
   /** Служебные поля мока: столько просмотрено и когда последний раз сохраняли. */
   watchedSec: number
@@ -63,7 +70,7 @@ function defaultUser(): User {
     photoUrl: tg?.photo_url,
     status: 'free',
     accessUntil: null,
-    moggs: 0,
+    moggs: DEMO_MOGGS,
   }
 }
 
@@ -83,7 +90,14 @@ function load(): MockState {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return emptyState()
     const parsed = JSON.parse(raw) as MockState
-    return { ...emptyState(), ...parsed, user: { ...defaultUser(), ...parsed.user } }
+    const restored = { ...emptyState(), ...parsed, user: { ...defaultUser(), ...parsed.user } }
+
+    // Демо, открытое до появления стартового баланса, доначисляем один раз:
+    // ничего не заработано и не потрачено — значит, это чистое состояние.
+    if (restored.user.moggs === 0 && restored.history.length === 0) {
+      restored.user.moggs = DEMO_MOGGS
+    }
+    return restored
   } catch {
     return emptyState()
   }

@@ -40,6 +40,11 @@ export function BonusesPage() {
     void loadPrizes()
   }, [loadBonuses, loadPrizes])
 
+  // Сектор с моггсами не выдаёт промокод, но и пустым не является:
+  // без этого выигрыш моггсами показывался как «В этот раз пусто».
+  const wonSector = wheel.find((sector) => sector.id === resultSectorId)
+  const wonMoggs = !wonPrize && wonSector && !wonSector.blank ? wonSector : null
+
   const moggs = user?.moggs ?? 0
   const spinCost = config?.spinCost ?? 100
   const canSpin = moggs >= spinCost && !spinning
@@ -236,12 +241,14 @@ export function BonusesPage() {
           <div style={{ textAlign: 'center' }}>
             <GiftIcon size={44} style={{ color: 'var(--accent)' }} />
             <h2 className="screen__title" style={{ fontSize: 24, margin: '12px 0 6px' }}>
-              {wonPrize ? 'Есть приз!' : 'В этот раз пусто'}
+              {wonPrize || wonMoggs ? 'Есть приз!' : 'В этот раз пусто'}
             </h2>
             <p className="muted" style={{ marginTop: 0 }}>
               {wonPrize
                 ? `${wonPrize.title}. Промокод сохранён в «Мои призы» и действует до ${formatDate(wonPrize.expiresAt)}.`
-                : 'Моггсы копятся за просмотр уроков — попробуй ещё раз.'}
+                : wonMoggs
+                  ? `${wonMoggs.label} — уже на балансе.`
+                  : 'Моггсы копятся за просмотр уроков — попробуй ещё раз.'}
             </p>
             <button
               className="btn btn--accent btn--block"
