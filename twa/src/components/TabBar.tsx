@@ -23,7 +23,7 @@ export function TabBar() {
           {({ isActive }) => (
             <>
               <span className="tabbar__icon">
-                <Icon size={21} filled={isActive} />
+                <Icon size={27} filled={isActive} />
               </span>
               {label}
             </>
