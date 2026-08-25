@@ -128,11 +128,6 @@ export function LessonPlayer({ lesson, startAt, onProgress }: Props) {
         {demo ? (
           <div className="player__demo">
             <PlayIcon size={34} style={{ color: 'var(--accent)' }} />
-            <div>
-              Демо-плеер: у урока не задан <b>kinescopeId</b>.
-              <br />
-              Промотка, таймкод и начисление моггсов работают как на реальном видео.
-            </div>
           </div>
         ) : (
           <iframe

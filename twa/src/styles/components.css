@@ -303,15 +303,6 @@
   flex: none;
 }
 
-.lesson__fav-label {
-  width: 58px;
-  font-size: 11px;
-  line-height: 1.2;
-  color: var(--on-light-dim);
-  text-align: right;
-  padding-top: 3px;
-}
-
 .lesson__fav-btn {
   display: flex;
   align-items: center;

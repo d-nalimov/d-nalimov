@@ -40,9 +40,6 @@ export function LessonCard({
         <div className="lesson__head">
           <h2 className="lesson__title">{lesson.title}</h2>
           <div className="lesson__fav">
-            <span className="lesson__fav-label">
-              {favorite ? 'В избранном' : 'Добавить в избранное'}
-            </span>
             <button
               className={`lesson__fav-btn${favorite ? ' lesson__fav-btn--on' : ''}`}
               onClick={onToggleFavorite}
