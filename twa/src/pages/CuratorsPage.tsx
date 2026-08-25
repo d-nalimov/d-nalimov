@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { EmptyState, Screen, SearchInput, Skeleton } from '../components/ui'
-import { SearchIcon, SendIcon } from '../components/icons'
+import { ChevronRight, SearchIcon } from '../components/icons'
 import { initials } from '../lib/format'
 import { haptic, openTelegram } from '../telegram/sdk'
 import { useBackButton } from '../telegram/useTelegram'
@@ -36,7 +36,17 @@ export function CuratorsPage() {
           </div>
         ) : filtered.length ? (
           filtered.map((curator) => (
-            <div className="row" key={curator.id}>
+            // Вся строка — кнопка: попасть по ней проще, чем по круглой иконке,
+            // а шеврон справа читается так же, как в остальных списках приложения.
+            <button
+              className="row"
+              key={curator.id}
+              type="button"
+              onClick={() => {
+                haptic.press()
+                openTelegram(`https://t.me/${curator.username}`)
+              }}
+            >
               {curator.photoUrl ? (
                 <img className="row__avatar" src={curator.photoUrl} alt="" loading="lazy" />
               ) : (
@@ -45,7 +55,7 @@ export function CuratorsPage() {
                   style={{
                     display: 'grid',
                     placeItems: 'center',
-                    color: 'var(--accent)',
+                    color: 'var(--text)',
                     fontFamily: 'var(--font-display)',
                   }}
                 >
@@ -54,29 +64,12 @@ export function CuratorsPage() {
               )}
 
               <div className="row__body">
-                <div className="row__name">
-                  {curator.name}{' '}
-                  {curator.tag ? (
-                    <span className="badge" style={{ marginLeft: 4 }}>
-                      {curator.tag}
-                    </span>
-                  ) : null}
-                </div>
+                <div className="row__name">{curator.name}</div>
                 <div className="row__role">{curator.role}</div>
               </div>
 
-              <button
-                className="icon-btn icon-btn--on"
-                type="button"
-                aria-label={`Написать ${curator.name}`}
-                onClick={() => {
-                  haptic.press()
-                  openTelegram(`https://t.me/${curator.username}`)
-                }}
-              >
-                <SendIcon size={19} />
-              </button>
-            </div>
+              <ChevronRight size={20} className="chevron" style={{ alignSelf: 'center' }} />
+            </button>
           ))
         ) : (
           <EmptyState icon={<SearchIcon size={30} />} title="Куратор не найден" />
