@@ -186,8 +186,8 @@ Node.
 
 ```bash
 # локально, в каталоге twa
-VITE_BASE_PATH=/web/ VITE_API_BASE_URL=/api npm ci && \
-VITE_BASE_PATH=/web/ VITE_API_BASE_URL=/api npm run build
+npm ci
+npm run build
 
 rsync -a --delete dist/ user@looksmaxx.ru:/tmp/cashyou-web/
 ```
@@ -199,12 +199,21 @@ sudo rsync -a --delete /tmp/cashyou-web/ /var/www/cashyou/
 sudo chown -R www-data:www-data /var/www/cashyou
 ```
 
-`VITE_BASE_PATH=/web/` прописывает подпуть в ссылки на скрипты, стили и шрифты.
-`VITE_API_BASE_URL=/api` — относительный путь, поэтому приложение ходит на тот же
-домен, с которого открыто.
+Настройки боевой сборки лежат в `twa/.env.production` и подхватываются обычным
+`npm run build` — задавать переменные в командной строке не нужно:
 
-> Если бэкенд ещё не поднят, соберите без `VITE_API_BASE_URL` — приложение
-> будет работать на локальных данных в браузере и не станет обращаться к API.
+| Переменная | Значение | Зачем |
+|---|---|---|
+| `VITE_BASE_PATH` | `/web/` | подпуть попадает в ссылки на скрипты, стили и шрифты |
+| `VITE_API_BASE_URL` | `/api` | относительный путь: приложение ходит на тот же домен, с которого открыто |
+
+Это не выданные кем-то ключи, а описание того, по каким путям на вашем домене
+лежат приложение и API. Меняете размещение — меняете эти две строки.
+
+> **Демо без бэкенда:** `npm run build:demo` (настройки в `twa/.env.demo`).
+> Такая сборка не обращается к API и держит всё в `localStorage` браузера:
+> у каждого, кто откроет, свои 9999 моггсов и ненастоящие промокоды.
+> Она для показа — на боевой домен её заливать нельзя.
 
 ## 9. Веб-сервер
 
@@ -319,7 +328,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://looksmaxx.ru/                 #
 
 ```bash
 # локально
-VITE_BASE_PATH=/web/ VITE_API_BASE_URL=/api npm run build
+npm run build
 rsync -a --delete dist/ user@looksmaxx.ru:/tmp/cashyou-web/
 # на сервере
 sudo rsync -a --delete /tmp/cashyou-web/ /var/www/cashyou/
@@ -375,7 +384,8 @@ sudo tail -f /var/log/nginx/error.log      # ошибки веб-сервера
 |---|---|---|
 | `502 Bad Gateway` на `/api/` | служба не запущена или упала на старте | `systemctl status cashyou-api`, смотреть журнал |
 | `404` на всех вызовах API | забыт слеш в конце `proxy_pass` | вернуть `proxy_pass http://127.0.0.1:8000/;` |
-| Белый экран на `/web/` | сборка без `VITE_BASE_PATH=/web/` | пересобрать и залить заново |
+| Белый экран на `/web/` | сборка без `VITE_BASE_PATH=/web/` | пересобрать `npm run build` и залить заново |
+| У всех сразу 9999 моггсов | залита демо-сборка (`build:demo`), приложение работает на моке | пересобрать `npm run build` и залить заново |
 | `401` в приложении | не совпал `BOT_TOKEN` либо приложение открыто вне Telegram | сверить токен бота |
 | `403 payment_required` | урок платный, доступ не выдан | так и задумано; проверить оплату |
 | `503 admin_disabled` при гашении кода | пуст `ADMIN_TOKEN` | заполнить и перезапустить службу |

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 /** Домены туннелей, через которые мини-приложение открывают с телефона. */
@@ -10,22 +10,29 @@ const tunnelHosts = [
   '.serveo.net',
 ]
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // base читается здесь, а не из src, поэтому import.meta.env недоступен:
+  // значения из .env-файлов достаём вручную. Переменная окружения всё ещё
+  // побеждает файл — так удобно собирать разово из командной строки.
+  const env = { ...loadEnv(mode, process.cwd(), 'VITE_'), ...process.env }
+
+  return {
   plugins: [react()],
   // Telegram Mini Apps обычно раздаются с подпути (GitHub Pages / CDN).
-  base: process.env.VITE_BASE_PATH ?? '/',
+  base: env.VITE_BASE_PATH || '/',
   server: {
     host: true,
     port: 5173,
     // Без этого dev-сервер отвечает «Blocked request» на домен туннеля.
-    allowedHosts: process.env.VITE_ALLOWED_HOSTS
-      ? process.env.VITE_ALLOWED_HOSTS.split(',').map((host) => host.trim())
+    allowedHosts: env.VITE_ALLOWED_HOSTS
+      ? env.VITE_ALLOWED_HOSTS.split(',').map((host) => host.trim())
       : tunnelHosts,
     // За HTTPS-туннелем клиент HMR должен идти в 443/wss, иначе живая перезагрузка молчит.
-    hmr: process.env.VITE_TUNNEL === 'true' ? { protocol: 'wss', clientPort: 443 } : undefined,
+    hmr: env.VITE_TUNNEL === 'true' ? { protocol: 'wss', clientPort: 443 } : undefined,
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
   },
+  }
 })
