@@ -287,7 +287,7 @@ export function BonusesPage() {
               ))}
             </div>
           ) : (
-            <p className="muted">Пока пусто. Посмотри первый урок — начислим моггсы.</p>
+            <p className="muted">У тебя нет моггсов, посмотри первый урок, и мы их начислим!</p>
           )}
           <button className="btn btn--block" style={{ marginTop: 12 }} onClick={() => setShowHistory(false)} type="button">
             Закрыть
