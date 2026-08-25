@@ -367,6 +367,9 @@
 }
 
 .lesson__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
   margin-top: 10px;
   font-size: 12px;
   color: var(--on-light-dim);
@@ -677,6 +680,9 @@
 }
 
 .promo__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
   font-size: 12px;
   color: var(--text-mute);
 }

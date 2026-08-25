@@ -50,9 +50,11 @@ export function PromoCard({
       </div>
 
       <div className="promo__meta">
+        <span>{prize.source === 'wheel' ? 'Выигрыш на колесе' : 'Покупка за моггсы'}</span>
         <span>
-          {prize.source === 'wheel' ? 'Выигрыш на колесе' : 'Покупка за моггсы'} ·{' '}
-          {used ? `отмечен ${formatDate(prize.usedAt as string)}` : `действует до ${formatDate(prize.expiresAt)}`}
+          {used
+            ? `отмечен ${formatDate(prize.usedAt as string)}`
+            : `действует до ${formatDate(prize.expiresAt)}`}
         </span>
       </div>
 

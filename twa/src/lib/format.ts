@@ -42,5 +42,5 @@ export function plural(count: number, one: string, few: string, many: string): s
 export function initials(firstName: string, lastName?: string): string {
   const a = firstName?.[0] ?? ''
   const b = lastName?.[0] ?? ''
-  return (a + b).toUpperCase() || '·'
+  return (a + b).toUpperCase()
 }

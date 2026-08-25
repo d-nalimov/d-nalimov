@@ -64,7 +64,11 @@ export function LessonCard({
           ) : null}
         </button>
 
-        <div className="lesson__meta">{meta.join(' · ')}</div>
+        <div className="lesson__meta">
+          {meta.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </div>
       </div>
 
       {/* В референсе материалы — отдельная кнопка под карточкой, а не внутри неё. */}
