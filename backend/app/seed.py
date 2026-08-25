@@ -76,16 +76,17 @@ COMMON, UNCOMMON, RARE, EPIC, LEGENDARY = (
 )
 
 # (id, подпись, цвет, пустой, что выдаём, моггсы, вес)
+# Вес = шанс в процентах, сумма по всем секторам 100.
 # Порядок подобран так, чтобы соседние сектора не совпадали по цвету.
 WHEEL = [
-    ("w1", "−10% продление", UNCOMMON, False, "promo", 0, 18),
-    ("w3", "Разбор куратора", EPIC, False, "promo", 0, 6),
-    ("w7", "В другой раз", COMMON, True, "none", 0, 22),
-    ("w5", "−25% мерч", RARE, False, "promo", 0, 12),
-    ("w2", "100 моггсов", UNCOMMON, False, "moggs", 100, 20),
-    ("w8", "−50% продление", LEGENDARY, False, "promo", 0, 3),
-    ("w4", "В другой раз", COMMON, True, "none", 0, 22),
-    ("w6", "Гайд отёки", RARE, False, "promo", 0, 14),
+    ("w1", "150 моггсов", UNCOMMON, False, "moggs", 150, 22),
+    ("w2", "GHK-Cu курс", LEGENDARY, False, "promo", 0, 2),
+    ("w3", "В другой раз", COMMON, True, "none", 0, 24),
+    ("w4", "Консультация Налимова", RARE, False, "promo", 0, 10),
+    ("w5", "Пенка для умывания", EPIC, False, "promo", 0, 6),
+    ("w6", "Перкуссионный массажёр", LEGENDARY, False, "promo", 0, 1),
+    ("w7", "В другой раз", COMMON, True, "none", 0, 24),
+    ("w8", "Разбор у куратора", RARE, False, "promo", 0, 11),
 ]
 
 SHOP = [

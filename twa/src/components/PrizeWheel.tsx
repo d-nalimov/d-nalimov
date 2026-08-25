@@ -64,6 +64,9 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
       >
         {sectors.map((sector, i) => {
           const mid = i * sectorSize + sectorSize / 2
+          // Длинное слово вроде «перкуссионный» на базовом кегле не помещается
+          // в сектор и наползает на ступицу — для таких подписей уменьшаем шрифт.
+          const longestWord = Math.max(...sector.label.split(' ').map((word) => word.length))
           // conic-gradient отсчитывает угол от 12 часов, CSS-поворот — от 3 часов.
           const flipped = mid > 180
           return (
@@ -89,9 +92,9 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
               <span
                 style={{
                   // Держим подпись у обода: длинная переносится в две строки, а не уезжает под ступицу.
-                  maxWidth: '62%',
+                  maxWidth: '66%',
                   transform: flipped ? 'rotate(180deg)' : 'none',
-                  fontSize: 9,
+                  fontSize: longestWord > 11 ? 8 : 9,
                   lineHeight: 1.15,
                   fontWeight: 700,
                   textTransform: 'uppercase',

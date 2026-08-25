@@ -28,8 +28,8 @@ async def test_spin_charges_and_may_issue_promo(client):
     body = (await client.post("/wheel/spin", headers=headers)).json()
 
     assert body["sectorId"]
-    # Списали стоимость прокрута; выигрыш моггсами мог часть вернуть.
-    assert body["moggs"] in (0, 100)
+    # Списали стоимость прокрута; сектор «150 моггсов» мог начислить сверху.
+    assert body["moggs"] in (0, 150)
     if body["prize"]:
         assert body["prize"]["code"].startswith("CY-")
         prizes = (await client.get("/prizes", headers=headers)).json()
