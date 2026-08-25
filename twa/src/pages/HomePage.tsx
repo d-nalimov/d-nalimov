@@ -71,20 +71,6 @@ export function HomePage() {
         </button>
       </div>
 
-      {!access ? (
-        <div className="card" style={{ marginTop: 16 }}>
-          <div className="gold">Открыт бесплатный блок</div>
-          <button
-            className="btn btn--gold btn--block"
-            style={{ marginTop: 12 }}
-            onClick={() => setPaywall(true)}
-            type="button"
-          >
-            Смотреть
-          </button>
-        </div>
-      ) : null}
-
       <h2 className="section-title" id="catalog">
         База материалов
       </h2>
@@ -104,6 +90,20 @@ export function HomePage() {
             ))
           : [0, 1, 2, 3].map((i) => <Skeleton key={i} height={168} />)}
       </div>
+
+      {!access ? (
+        <div className="card" style={{ marginTop: 16 }}>
+          <div className="gold">Открыт бесплатный блок</div>
+          <button
+            className="btn btn--gold btn--block"
+            style={{ marginTop: 12 }}
+            onClick={() => setPaywall(true)}
+            type="button"
+          >
+            Смотреть
+          </button>
+        </div>
+      ) : null}
 
       {paywall ? <PaywallSheet onClose={() => setPaywall(false)} /> : null}
     </Screen>
