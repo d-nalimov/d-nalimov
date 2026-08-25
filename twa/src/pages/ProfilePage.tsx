@@ -110,13 +110,12 @@ export function ProfilePage() {
 }
 
 function Stat({ value, label }: { value: number; label: string }) {
+  // Подпись сверху, число под ней — как в карточке баланса на экране бонусов.
   return (
-    <div style={{ flex: 1 }}>
-      <div className="balance__value" style={{ fontSize: 26 }}>
+    <div style={{ flex: 1, textAlign: 'center' }}>
+      <div className="caps-label">{label}</div>
+      <div className="balance__value" style={{ fontSize: 28, marginTop: 4 }}>
         {value}
-      </div>
-      <div className="caps-label" style={{ marginTop: 2 }}>
-        {label}
       </div>
     </div>
   )
