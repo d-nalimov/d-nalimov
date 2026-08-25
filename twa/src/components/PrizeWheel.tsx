@@ -83,6 +83,7 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
                   textTransform: 'uppercase',
                   textAlign: 'center',
                   color: labelColor(sector.color, sector.blank),
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.35)',
                 }}
               >
                 {sector.label}
@@ -96,13 +97,25 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
   )
 }
 
-/** Тёмная подпись на светлом секторе и наоборот — в монохроме читаемость решает всё. */
+/**
+ * Цвет подписи выбирается по контрасту с заливкой сектора: у цветов редкости
+ * яркость разная, и порог «светлее-темнее» на них врёт — считаем оба варианта
+ * и берём тот, что читается лучше.
+ */
 function labelColor(hex: string, blank?: boolean): string {
   const value = hex.replace('#', '')
-  const [r, g, b] = [0, 2, 4].map((i) => Number.parseInt(value.slice(i, i + 2), 16) / 255)
-  const light = 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.55
-  if (blank) return light ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.45)'
-  return light ? '#111111' : '#ffffff'
+  const channels = [0, 2, 4].map((i) => {
+    const channel = Number.parseInt(value.slice(i, i + 2), 16) / 255
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  })
+  const luminance = 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+
+  const onWhite = 1.05 / (luminance + 0.05)
+  const onBlack = (luminance + 0.05) / 0.05
+  const dark = onBlack > onWhite
+
+  if (blank) return dark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.55)'
+  return dark ? '#101010' : '#ffffff'
 }
 
 export function WheelLegend({ sectors }: { sectors: WheelSector[] }) {

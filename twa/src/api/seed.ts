@@ -153,15 +153,28 @@ export const curators: Curator[] = [
   },
 ]
 
+/**
+ * Цвета секторов — шкала редкости: серый обычный → зелёный → синий →
+ * фиолетовый → оранжевый легендарный. Чем ниже шанс выпадения, тем выше редкость.
+ */
+const RARITY = {
+  common: '#6f7680',
+  uncommon: '#4caf3b',
+  rare: '#2e7fd4',
+  epic: '#9b4fd1',
+  legendary: '#e8873a',
+} as const
+
+// Порядок подобран так, чтобы соседние сектора не совпадали по цвету.
 export const wheelSectors: WheelSector[] = [
-  { id: 'w1', label: '−10% продление', color: '#ffffff' },
-  { id: 'w2', label: '100 моггсов', color: '#2b2b2b' },
-  { id: 'w3', label: 'Разбор куратора', color: '#d9d9d9' },
-  { id: 'w4', label: 'В другой раз', color: '#1e1e1e', blank: true },
-  { id: 'w5', label: '−25% мерч', color: '#ededed' },
-  { id: 'w6', label: 'Гайд отёки', color: '#3d3d3d' },
-  { id: 'w7', label: 'В другой раз', color: '#b5b5b5', blank: true },
-  { id: 'w8', label: '−50% продление', color: '#4f4f4f' },
+  { id: 'w1', label: '−10% продление', color: RARITY.uncommon },
+  { id: 'w3', label: 'Разбор куратора', color: RARITY.epic },
+  { id: 'w7', label: 'В другой раз', color: RARITY.common, blank: true },
+  { id: 'w5', label: '−25% мерч', color: RARITY.rare },
+  { id: 'w2', label: '100 моггсов', color: RARITY.uncommon },
+  { id: 'w8', label: '−50% продление', color: RARITY.legendary },
+  { id: 'w4', label: 'В другой раз', color: RARITY.common, blank: true },
+  { id: 'w6', label: 'Гайд отёки', color: RARITY.rare },
 ]
 
 export const shopItems: ShopItem[] = [
