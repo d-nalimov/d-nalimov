@@ -4,14 +4,22 @@ import { ChevronRight, LockIcon } from './icons'
 export function CourseCard({
   category,
   locked,
+  index = 0,
   onClick,
 }: {
   category: Category
   locked: boolean
+  /** Порядковый номер в сетке — задаёт задержку появления. */
+  index?: number
   onClick: () => void
 }) {
   return (
-    <button className="course" onClick={onClick} type="button">
+    <button
+      className="course pressable appear"
+      style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
+      onClick={onClick}
+      type="button"
+    >
       {category.cover ? (
         <img className="course__img" src={category.cover} alt="" loading="lazy" />
       ) : (

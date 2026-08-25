@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { SearchIcon } from './icons'
 
 export function Screen({
@@ -55,8 +55,14 @@ export function Segmented<T extends string>({
   options: { value: T; label: string }[]
   onChange: (value: T) => void
 }) {
+  const activeIndex = Math.max(0, options.findIndex((option) => option.value === value))
+
   return (
-    <div className="segmented" role="tablist">
+    <div
+      className="segmented"
+      role="tablist"
+      style={{ '--count': options.length, '--active': activeIndex } as CSSProperties}
+    >
       {options.map((option) => (
         <button
           key={option.value}
@@ -105,17 +111,37 @@ export function Skeleton({ height = 96, radius }: { height?: number; radius?: nu
   )
 }
 
-export function Sheet({ onClose, children }: { onClose: () => void; children: ReactNode }) {
+/** Длительность ухода шторки; совпадает с --dur в стилях. */
+const SHEET_EXIT_MS = 220
+
+export function Sheet({
+  onClose,
+  children,
+}: {
+  onClose: () => void
+  /** Функция получает close(), чтобы кнопки внутри тоже уходили с анимацией. */
+  children: ReactNode | ((close: () => void) => ReactNode)
+}) {
+  const [leaving, setLeaving] = useState(false)
+
+  function close() {
+    if (leaving) return
+    setLeaving(true)
+    window.setTimeout(onClose, SHEET_EXIT_MS)
+  }
+
   return (
     <div
-      className="sheet"
+      className={`sheet${leaving ? ' sheet--leaving' : ''}`}
       role="dialog"
       aria-modal="true"
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
+        if (e.target === e.currentTarget) close()
       }}
     >
-      <div className="sheet__body">{children}</div>
+      <div className="sheet__body">
+        {typeof children === 'function' ? children(close) : children}
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { TabBar } from './components/TabBar'
 import { BonusesPage } from './pages/BonusesPage'
 import { CategoryPage } from './pages/CategoryPage'
@@ -17,6 +17,23 @@ export function App() {
   const boot = useAppStore((s) => s.boot)
   const toast = useAppStore((s) => s.toast)
   const hideToast = useAppStore((s) => s.hideToast)
+  const location = useLocation()
+
+  // Тост держим на экране лишний миг, чтобы он успел уйти анимацией.
+  const [shownToast, setShownToast] = useState<string | null>(null)
+  const [toastLeaving, setToastLeaving] = useState(false)
+
+  useEffect(() => {
+    if (toast) {
+      setShownToast(toast)
+      setToastLeaving(false)
+      return
+    }
+    if (!shownToast) return
+    setToastLeaving(true)
+    const timer = window.setTimeout(() => setShownToast(null), 220)
+    return () => window.clearTimeout(timer)
+  }, [toast, shownToast])
 
   useEffect(() => {
     void boot()
@@ -52,22 +69,29 @@ export function App() {
 
   return (
     <div className="app">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/category/:categoryId" element={<CategoryPage />} />
-        <Route path="/lesson/:lessonId" element={<LessonPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-        <Route path="/curators" element={<CuratorsPage />} />
-        <Route path="/bonuses" element={<BonusesPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      {/* Ключ по адресу: каждый экран появляется своим движением. */}
+      <div className="page" key={location.pathname}>
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
+          <Route path="/lesson/:lessonId" element={<LessonPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/curators" element={<CuratorsPage />} />
+          <Route path="/bonuses" element={<BonusesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
 
       <TabBar />
 
-      {toast ? (
-        <div className="toast" role="status" onClick={hideToast}>
-          {toast}
+      {shownToast ? (
+        <div
+          className={`toast${toastLeaving ? ' toast--leaving' : ''}`}
+          role="status"
+          onClick={hideToast}
+        >
+          {shownToast}
         </div>
       ) : null}
     </div>

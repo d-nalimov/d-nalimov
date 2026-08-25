@@ -7,6 +7,7 @@ export function LessonCard({
   progress,
   favorite,
   locked,
+  index = 0,
   onOpen,
   onToggleFavorite,
   onMaterials,
@@ -15,6 +16,8 @@ export function LessonCard({
   progress?: LessonProgress
   favorite: boolean
   locked: boolean
+  /** Порядковый номер в списке — задаёт задержку появления. */
+  index?: number
   onOpen: () => void
   onToggleFavorite: () => void
   onMaterials: () => void
@@ -34,13 +37,13 @@ export function LessonCard({
   ].filter(Boolean)
 
   return (
-    <article>
+    <article className="appear" style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}>
       <div className="lesson__card">
         <div className="lesson__head">
           <h2 className="lesson__title">{lesson.title}</h2>
           <div className="lesson__fav">
             <button
-              className={`lesson__fav-btn${favorite ? ' lesson__fav-btn--on' : ''}`}
+              className={`lesson__fav-btn pressable${favorite ? ' lesson__fav-btn--on' : ''}`}
               onClick={onToggleFavorite}
               aria-label={favorite ? 'Убрать из избранного' : 'Добавить в избранное'}
               aria-pressed={favorite}
@@ -51,7 +54,12 @@ export function LessonCard({
           </div>
         </div>
 
-        <button className="lesson__poster" onClick={onOpen} type="button" aria-label={lesson.title}>
+        <button
+          className="lesson__poster pressable"
+          onClick={onOpen}
+          type="button"
+          aria-label={lesson.title}
+        >
           {lesson.poster ? <img src={lesson.poster} alt="" loading="lazy" /> : null}
           <span className="lesson__play">
             {locked ? <LockIcon size={21} /> : <PlayIcon size={21} />}

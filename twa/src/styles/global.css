@@ -172,11 +172,12 @@ img {
   background: var(--surface-2);
   color: var(--text);
   font-weight: 600;
-  transition: transform 0.12s ease, opacity 0.12s ease;
+  transition: transform var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease),
+    filter var(--dur-fast) var(--ease);
 }
 
 .btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .btn:disabled {
@@ -233,11 +234,11 @@ img {
   background: var(--surface-2);
   color: var(--text-dim);
   flex: none;
-  transition: transform 0.12s ease;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
 }
 
 .icon-btn:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
 }
 
 .icon-btn--on {
@@ -248,4 +249,41 @@ img {
 .chevron {
   color: var(--text);
   flex: none;
+}
+
+/* ---------- Движение ---------- */
+
+/* Смена экрана: короткий подъём с проявлением, чтобы переход читался,
+   но не задерживал. */
+.page {
+  animation: page-in var(--dur) var(--ease) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Появление элемента списка. Задержку задаёт сам список, но не больше
+   шести шагов — иначе хвост длинного списка ощутимо запаздывает. */
+.appear {
+  animation: appear var(--dur) var(--ease) both;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Нажатие на карточку или строку: тот же отклик, что у кнопок. */
+.pressable {
+  transition: transform var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+
+.pressable:active {
+  transform: scale(0.985);
 }

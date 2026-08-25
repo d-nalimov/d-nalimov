@@ -67,10 +67,11 @@ export function CategoryPage() {
         {!lessons ? (
           [0, 1, 2].map((i) => <Skeleton key={i} height={280} />)
         ) : filtered.length ? (
-          filtered.map((lesson) => (
+          filtered.map((lesson, index) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
+              index={index}
               progress={progress[lesson.id]}
               favorite={favorites.includes(lesson.id)}
               locked={!lesson.free && !access}

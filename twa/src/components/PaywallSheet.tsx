@@ -28,7 +28,7 @@ export function PaywallSheet({ onClose }: { onClose: () => void }) {
     if (poll.current) window.clearInterval(poll.current)
   }, [])
 
-  async function pay() {
+  async function pay(close: () => void) {
     if (!config) return
     haptic.press()
     setPending(true)
@@ -44,7 +44,7 @@ export function PaywallSheet({ onClose }: { onClose: () => void }) {
           haptic.success()
           showToast('Доступ открыт. Приятного обучения!')
           setPending(false)
-          onClose()
+          close()
         }
         if (status === 'canceled') {
           if (poll.current) window.clearInterval(poll.current)
@@ -62,6 +62,8 @@ export function PaywallSheet({ onClose }: { onClose: () => void }) {
 
   return (
     <Sheet onClose={onClose}>
+      {(close) => (
+        <>
       <h2 className="screen__title" style={{ fontSize: 26, marginBottom: 10 }}>
         Полный доступ к клубу
       </h2>
@@ -78,19 +80,26 @@ export function PaywallSheet({ onClose }: { onClose: () => void }) {
         ))}
       </div>
 
-      <button className="btn btn--accent btn--block" onClick={pay} disabled={pending} type="button">
+      <button
+        className="btn btn--accent btn--block"
+        onClick={() => void pay(close)}
+        disabled={pending}
+        type="button"
+      >
         {pending
           ? 'Ждём подтверждения оплаты...'
           : config
             ? `Оплатить ${formatMoney(config.priceAmount, config.priceCurrency)}`
             : 'Оплатить'}
       </button>
-      <button className="btn btn--block" style={{ marginTop: 8 }} onClick={onClose} type="button">
+      <button className="btn btn--block" style={{ marginTop: 8 }} onClick={close} type="button">
         Позже
       </button>
       <p className="muted" style={{ fontSize: 12, textAlign: 'center', marginBottom: 0 }}>
         Оплата через ЮKassa. После подтверждения доступ откроется автоматически.
       </p>
+        </>
+      )}
     </Sheet>
   )
 }

@@ -178,10 +178,14 @@ export function BonusesPage() {
         <section style={{ marginTop: 18 }}>
           <div className="stack">
             {shop.length
-              ? shop.map((item) => {
+              ? shop.map((item, index) => {
                   const affordable = moggs >= item.price
                   return (
-                    <div className="shop-item" key={item.id}>
+                    <div
+                      className="shop-item appear"
+                      style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
+                      key={item.id}
+                    >
                       {item.image ? (
                         <img className="shop-item__img" src={item.image} alt="" loading="lazy" />
                       ) : (
@@ -213,10 +217,11 @@ export function BonusesPage() {
       {tab === 'prizes' ? (
         <section className="stack" style={{ marginTop: 18 }}>
           {prizes.length ? (
-            prizes.map((prize) => (
+            prizes.map((prize, index) => (
               <PromoCard
                 key={prize.id}
                 prize={prize}
+                index={index}
                 managerUsername={config?.managerUsername ?? 'ceo_trauma'}
                 onCopied={() => showToast('Промокод скопирован')}
               />
@@ -238,6 +243,7 @@ export function BonusesPage() {
 
       {showResult ? (
         <Sheet onClose={() => setShowResult(false)}>
+          {(close) => (
           <div style={{ textAlign: 'center' }}>
             <GiftIcon size={44} style={{ color: 'var(--accent)' }} />
             <h2 className="screen__title" style={{ fontSize: 24, margin: '12px 0 6px' }}>
@@ -254,7 +260,7 @@ export function BonusesPage() {
               className="btn btn--accent btn--block"
               style={{ marginTop: 14 }}
               onClick={() => {
-                setShowResult(false)
+                close()
                 if (wonPrize) setTab('prizes')
               }}
               type="button"
@@ -262,11 +268,14 @@ export function BonusesPage() {
               {wonPrize ? 'Открыть мои призы' : 'Понятно'}
             </button>
           </div>
+          )}
         </Sheet>
       ) : null}
 
       {showHistory ? (
         <Sheet onClose={() => setShowHistory(false)}>
+          {(close) => (
+            <>
           <h2 className="screen__title" style={{ fontSize: 22 }}>
             История моггсов
           </h2>
@@ -296,14 +305,18 @@ export function BonusesPage() {
           ) : (
             <p className="muted">У тебя нет моггсов, посмотри первый урок, и мы их начислим!</p>
           )}
-          <button className="btn btn--block" style={{ marginTop: 12 }} onClick={() => setShowHistory(false)} type="button">
+          <button className="btn btn--block" style={{ marginTop: 12 }} onClick={close} type="button">
             Закрыть
           </button>
+            </>
+          )}
         </Sheet>
       ) : null}
 
       {showInfo ? (
         <Sheet onClose={() => setShowInfo(false)}>
+          {(close) => (
+            <>
           <h2 className="screen__title" style={{ fontSize: 22 }}>
             Как работают моггсы
           </h2>
@@ -317,9 +330,11 @@ export function BonusesPage() {
               напиши его менеджеру клуба.
             </li>
           </ul>
-          <button className="btn btn--block" onClick={() => setShowInfo(false)} type="button">
+          <button className="btn btn--block" onClick={close} type="button">
             Понятно
           </button>
+            </>
+          )}
         </Sheet>
       ) : null}
     </Screen>

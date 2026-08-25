@@ -31,7 +31,7 @@ export function HomePage() {
 
       <div className="tiles">
         <button
-          className="tile"
+          className="tile pressable"
           type="button"
           onClick={() => {
             haptic.tap()
@@ -44,7 +44,7 @@ export function HomePage() {
           <span className="caps-label">База материалов</span>
         </button>
         <button
-          className="tile"
+          className="tile pressable"
           type="button"
           onClick={() => {
             haptic.tap()
@@ -57,7 +57,7 @@ export function HomePage() {
           <span className="caps-label">Кураторы</span>
         </button>
         <button
-          className="tile"
+          className="tile pressable"
           type="button"
           onClick={() => {
             haptic.tap()
@@ -91,10 +91,11 @@ export function HomePage() {
 
       <div className="courses">
         {categories.length
-          ? categories.map((category) => (
+          ? categories.map((category, index) => (
               <CourseCard
                 key={category.id}
                 category={category}
+                index={index}
                 locked={!category.free && !access}
                 onClick={() => {
                   haptic.tap()

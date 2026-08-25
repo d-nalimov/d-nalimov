@@ -27,7 +27,19 @@
   font-size: 12.5px;
   font-weight: 500;
   padding: 6px 0;
-  transition: color 0.15s ease;
+  transition: color var(--dur) var(--ease);
+}
+
+.tabbar__icon {
+  transition: transform var(--dur) var(--ease);
+}
+
+.tabbar__item--active .tabbar__icon {
+  transform: translateY(-1px) scale(1.06);
+}
+
+.tabbar__item:active .tabbar__icon {
+  transform: scale(0.9);
 }
 
 .tabbar__item--active {
@@ -246,6 +258,7 @@
 }
 
 .segmented {
+  position: relative;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
@@ -253,17 +266,34 @@
   margin: 14px 0 4px;
 }
 
+/* Подложка активного пункта — одна на весь переключатель, поэтому её можно
+   двигать. Шаг равен собственной ширине плюс зазор сетки. */
+.segmented::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc((100% - (var(--count) - 1) * 8px) / var(--count));
+  background: var(--accent);
+  border-radius: 999px;
+  transform: translateX(calc(var(--active) * (100% + 8px)));
+  transition: transform var(--dur) var(--ease);
+}
+
 .segmented__item {
+  position: relative;
+  z-index: 1;
   height: 44px;
   border-radius: 999px;
   font-weight: 600;
   font-size: 14px;
   color: var(--text-mute);
   background: transparent;
+  transition: color var(--dur) var(--ease);
 }
 
 .segmented__item--active {
-  background: var(--accent);
   color: var(--on-accent);
 }
 
@@ -314,6 +344,19 @@
   color: #ffffff;
 }
 
+.lesson__fav-btn--on svg {
+  animation: heart-pop var(--dur-slow) var(--ease);
+}
+
+@keyframes heart-pop {
+  40% {
+    transform: scale(1.28);
+  }
+  70% {
+    transform: scale(0.94);
+  }
+}
+
 .lesson__poster {
   position: relative;
   display: block;
@@ -358,6 +401,7 @@
   display: block;
   height: 100%;
   background: var(--accent);
+  transition: width var(--dur) var(--ease);
 }
 
 .lesson__meta {
@@ -439,6 +483,7 @@
   bottom: 0;
   border-radius: 999px;
   background: var(--accent);
+  transition: width var(--dur-fast) linear;
 }
 
 .seekbar__knob {
@@ -449,6 +494,7 @@
   border-radius: 50%;
   background: var(--accent);
   transform: translate(-50%, -50%);
+  transition: left var(--dur-fast) linear;
 }
 
 /* ---------- Списки ---------- */
@@ -535,6 +581,13 @@
   line-height: 1;
   font-weight: 600;
   margin-top: 2px;
+  animation: value-bump var(--dur-slow) var(--ease);
+}
+
+@keyframes value-bump {
+  30% {
+    transform: scale(1.08);
+  }
 }
 
 /* Товар магазина: картинка слева, цена и действие справа. */
@@ -741,6 +794,14 @@
   to { opacity: 1; transform: none; }
 }
 
+.toast--leaving {
+  animation: toast-out var(--dur) var(--ease) both;
+}
+
+@keyframes toast-out {
+  to { opacity: 0; transform: translateY(10px); }
+}
+
 .sheet {
   position: fixed;
   inset: 0;
@@ -750,6 +811,20 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(3px);
+  animation: fade-in var(--dur) var(--ease);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+/* Шторка закрывается тем же движением, каким открылась. */
+.sheet--leaving {
+  animation: fade-in var(--dur) var(--ease) reverse both;
+}
+
+.sheet--leaving .sheet__body {
+  animation: sheet-in var(--dur) var(--ease) reverse both;
 }
 
 .sheet__body {

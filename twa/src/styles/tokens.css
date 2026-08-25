@@ -31,6 +31,13 @@
   --radius: 16px;
   --radius-lg: 22px;
 
+  /* Движение: одна кривая на всё, три длительности. Кривая с быстрым стартом
+     и мягким торможением — так интерфейс кажется отзывчивым, а не медленным. */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 360ms;
+
   --tabbar-h: 72px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);

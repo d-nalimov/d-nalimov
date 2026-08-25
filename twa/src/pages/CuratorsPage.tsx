@@ -34,11 +34,12 @@ export function CuratorsPage() {
             <Skeleton height={64} />
           </div>
         ) : filtered.length ? (
-          filtered.map((curator) => (
+          filtered.map((curator, index) => (
             // Вся строка — кнопка: попасть по ней проще, чем по круглой иконке,
             // а шеврон справа читается так же, как в остальных списках приложения.
             <button
-              className="row"
+              className="row pressable appear"
+              style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}
               key={curator.id}
               type="button"
               onClick={() => {

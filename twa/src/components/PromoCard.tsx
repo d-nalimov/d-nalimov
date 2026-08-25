@@ -6,10 +6,13 @@ import { CopyIcon, SendIcon } from './icons'
 export function PromoCard({
   prize,
   managerUsername,
+  index = 0,
   onCopied,
 }: {
   prize: Prize
   managerUsername: string
+  /** Порядковый номер в списке — задаёт задержку появления. */
+  index?: number
   onCopied: () => void
 }) {
   const expired = new Date(prize.expiresAt).getTime() < Date.now()
@@ -26,7 +29,7 @@ export function PromoCard({
   }
 
   return (
-    <div className="card promo">
+    <div className="card promo appear" style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
         <strong>{prize.title}</strong>
         {used ? (

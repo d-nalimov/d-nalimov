@@ -46,10 +46,11 @@ export function FavoritesPage() {
         </div>
       ) : visible.length ? (
         <div className="lesson-list">
-          {visible.map((lesson) => (
+          {visible.map((lesson, index) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
+              index={index}
               progress={progress[lesson.id]}
               favorite
               locked={!lesson.free && !access}
