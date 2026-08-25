@@ -76,29 +76,30 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                width: '44%',
+                // Дорожка подписи: начинается на одном радиусе для всех секторов,
+                // поэтому надписи стоят ровным кольцом и не липнут к ступице.
+                width: '46%',
+                paddingLeft: '19%',
+                paddingRight: '3%',
                 height: 30,
                 marginTop: -15,
                 transformOrigin: '0 50%',
                 transform: `rotate(${mid - 90}deg)`,
                 display: 'flex',
                 alignItems: 'center',
-                // Дальний край блока всегда у обода — там и держим текст.
-                justifyContent: 'flex-end',
-                padding: '0 10px 0 0',
                 pointerEvents: 'none',
               }}
             >
               <span
                 style={{
-                  // Держим подпись у обода: длинная переносится в две строки, а не уезжает под ступицу.
-                  maxWidth: '66%',
+                  width: '100%',
                   transform: flipped ? 'rotate(180deg)' : 'none',
+                  // Поворот на 180° зеркалит стороны: прижимаем текст к ступице в обоих случаях.
+                  textAlign: flipped ? 'right' : 'left',
                   fontSize: longestWord > 11 ? 8 : 9,
                   lineHeight: 1.15,
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  textAlign: 'center',
                   color: labelColor(sector.color, sector.blank),
                   textShadow: '0 1px 2px rgba(0, 0, 0, 0.35)',
                 }}
