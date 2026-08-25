@@ -575,12 +575,28 @@
   color: var(--text-dim);
 }
 
+/* Число и монетка стоят в строке; выравниваем по середине цифр, а не по боксу. */
+.balance__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
 .balance__value {
   font-family: var(--font-display);
   font-size: 44px;
   line-height: 1;
   font-weight: 600;
-  margin-top: 2px;
+}
+
+/* Диаметр монетки равен высоте цифр; сдвиг на пиксель — под просвет для нижних выносных. */
+.balance__coin {
+  width: 36px;
+  height: 36px;
+  display: block;
+  flex: none;
+  transform: translateY(1px);
 }
 
 /* Товар магазина: картинка слева, цена и действие справа. */

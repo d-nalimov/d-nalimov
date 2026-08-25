@@ -10,6 +10,7 @@ import { formatDate, plural } from '../lib/format'
 import { haptic } from '../telegram/sdk'
 import { useBackButton } from '../telegram/useTelegram'
 import { useAppStore } from '../store/useAppStore'
+import mogcoin from '../assets/mogcoin.png'
 
 type Tab = 'wheel' | 'shop' | 'prizes'
 
@@ -114,7 +115,10 @@ export function BonusesPage() {
     >
       <div className="card">
         <div className="balance__label">Мои моггсы:</div>
-        <div className="balance__value">{moggs}</div>
+        <div className="balance__row">
+          <span className="balance__value">{moggs}</span>
+          <img className="balance__coin" src={mogcoin} alt="" aria-hidden="true" />
+        </div>
 
         <button
           className="link-row"
