@@ -158,11 +158,21 @@ const RARITY = {
 // Порядок подобран так, чтобы соседние сектора не совпадали по цвету.
 export const wheelSectors: WheelSector[] = [
   { id: 'w1', label: '150 моггсов', color: RARITY.uncommon },
-  { id: 'w2', label: 'GHK-Cu курс', color: RARITY.legendary },
+  { id: 'w2', label: 'GHK-Cu курс', color: RARITY.legendary, contactUrl: 'https://t.me/m/lPwuTvhINTM6' },
   { id: 'w3', label: 'В другой раз', color: RARITY.common, blank: true },
-  { id: 'w4', label: 'Консультация Налимова', color: RARITY.rare },
+  {
+    id: 'w4',
+    label: 'Консультация Налимова',
+    color: RARITY.rare,
+    contactUrl: 'https://t.me/m/_YUWVgG5YTk6',
+  },
   { id: 'w5', label: 'Пенка для умывания', color: RARITY.epic },
-  { id: 'w6', label: 'Перкуссионный массажёр', color: RARITY.legendary },
+  {
+    id: 'w6',
+    label: 'Перкуссионный массажёр',
+    color: RARITY.legendary,
+    contactUrl: 'https://t.me/m/SA72PWqDZjcy',
+  },
   { id: 'w7', label: 'В другой раз', color: RARITY.common, blank: true },
   { id: 'w8', label: 'Разбор у куратора', color: RARITY.rare },
 ]

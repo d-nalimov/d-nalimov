@@ -110,6 +110,8 @@ class PrizeOut(Schema):
     title: str
     code: str
     source: str
+    #: Личная ссылка на переписку за этим призом; пусто — общий менеджер.
+    contact_url: str | None = None
     created_at: datetime
     expires_at: datetime
     used_at: datetime | None = None

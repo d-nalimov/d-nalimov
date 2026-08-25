@@ -46,7 +46,12 @@ async def spin(session: SessionDep, user: CurrentUser, settings: SettingsDep) ->
         await add_moggs(session, user, sector.reward_moggs, "Выигрыш на колесе")
     elif sector.reward_kind == "promo":
         prize = await issue_prize(
-            session, user, title=sector.label, source="wheel", ttl_days=settings.promo_ttl_days
+            session,
+            user,
+            title=sector.label,
+            source="wheel",
+            ttl_days=settings.promo_ttl_days,
+            contact_url=sector.contact_url,
         )
 
     await session.commit()
@@ -77,7 +82,12 @@ async def buy(
 
     await add_moggs(session, user, -item.price, f"Покупка: {item.title}")
     prize = await issue_prize(
-        session, user, title=item.title, source="shop", ttl_days=settings.promo_ttl_days
+        session,
+        user,
+        title=item.title,
+        source="shop",
+        ttl_days=settings.promo_ttl_days,
+        contact_url=item.contact_url,
     )
 
     await session.commit()

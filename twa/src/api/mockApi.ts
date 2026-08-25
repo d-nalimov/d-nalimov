@@ -139,7 +139,7 @@ function addMoggs(amount: number, reason: string): void {
   state.history = state.history.slice(0, 100)
 }
 
-function createPrize(title: string, source: Prize['source']): Prize {
+function createPrize(title: string, source: Prize['source'], contactUrl?: string): Prize {
   const now = new Date()
   const expires = new Date(now.getTime() + config.promoTtlDays * 24 * 60 * 60 * 1000)
   const prize: Prize = {
@@ -147,6 +147,8 @@ function createPrize(title: string, source: Prize['source']): Prize {
     title,
     code: promoCode(),
     source,
+    // Копия на момент выдачи: приз останется рабочим, даже если каталог поменяют.
+    contactUrl: contactUrl ?? null,
     createdAt: now.toISOString(),
     expiresAt: expires.toISOString(),
     usedAt: null,
@@ -289,7 +291,7 @@ export const mockApi: Api = {
       const amount = Number.parseInt(sector.label, 10) || 100
       addMoggs(amount, 'Выигрыш на колесе')
     } else {
-      prize = createPrize(sector.label, 'wheel')
+      prize = createPrize(sector.label, 'wheel', sector.contactUrl)
     }
 
     save()

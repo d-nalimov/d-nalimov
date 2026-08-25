@@ -16,7 +16,13 @@ def generate_code() -> str:
 
 
 async def issue_prize(
-    session: AsyncSession, user: User, *, title: str, source: str, ttl_days: int
+    session: AsyncSession,
+    user: User,
+    *,
+    title: str,
+    source: str,
+    ttl_days: int,
+    contact_url: str | None = None,
 ) -> Prize:
     """Выдаёт одноразовый промокод со сроком жизни ttl_days."""
     now = datetime.now(timezone.utc)
@@ -26,6 +32,7 @@ async def issue_prize(
         title=title,
         code=generate_code(),
         source=source,
+        contact_url=contact_url,
         created_at=now,
         expires_at=now + timedelta(days=ttl_days),
     )

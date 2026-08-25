@@ -56,14 +56,16 @@ export function PromoCard({
         </span>
       </div>
 
-      {/* Гасит промокод менеджер на своей стороне — пользователь только присылает код. */}
+      {/* Гасит промокод менеджер на своей стороне — пользователь только присылает код.
+          У части призов свой адресат, у остальных — общий менеджер клуба. */}
       {!inactive ? (
         <button
           className="btn btn--accent btn--block"
           onClick={() => {
             haptic.press()
             openTelegram(
-              `https://t.me/${managerUsername}?text=${encodeURIComponent(`Промокод ${prize.code}`)}`,
+              prize.contactUrl ||
+                `https://t.me/${managerUsername}?text=${encodeURIComponent(`Промокод ${prize.code}`)}`,
             )
           }}
           type="button"

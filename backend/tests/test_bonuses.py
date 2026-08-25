@@ -64,3 +64,38 @@ async def test_buy_without_moggs_is_rejected(client):
 
     assert response.status_code == 400
     assert response.json()["code"] == "insufficient_funds"
+
+
+async def test_prize_keeps_contact_link(client):
+    """Ссылка на переписку копируется в приз при выдаче и переживает правку каталога."""
+    from sqlalchemy import select
+
+    from app.db import SessionMaker
+    from app.models import User, WheelSector
+    from app.services.prizes import issue_prize
+
+    tg = 700310
+    headers = auth_header(tg)
+    await client.post("/auth", headers=headers)
+
+    async with SessionMaker() as session:
+        sector = await session.get(WheelSector, "w6")
+        user = await session.scalar(select(User).where(User.telegram_id == tg))
+        prize = await issue_prize(
+            session,
+            user,
+            title=sector.label,
+            source="wheel",
+            ttl_days=30,
+            contact_url=sector.contact_url,
+        )
+        await session.commit()
+        issued_link = prize.contact_url
+
+        # Каталог поменяли — у выданного приза ссылка прежняя.
+        sector.contact_url = "https://t.me/m/another"
+        await session.commit()
+
+    assert issued_link == "https://t.me/m/SA72PWqDZjcy"
+    prizes = (await client.get("/prizes", headers=headers)).json()
+    assert prizes[0]["contactUrl"] == "https://t.me/m/SA72PWqDZjcy"

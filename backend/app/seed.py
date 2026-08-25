@@ -76,19 +76,20 @@ COMMON, UNCOMMON, RARE, EPIC, LEGENDARY = (
     "#8d5327",
 )
 
-# (id, подпись, цвет, пустой, что выдаём, моггсы, вес)
+# (id, подпись, цвет, пустой, что выдаём, моггсы, вес, ссылка на переписку)
 # Вес — шанс в промилле, сумма по всем секторам 1000. Промилле, а не проценты,
 # потому что легендарка целиком весит полпроцента и целыми числами не выражается.
+# Пустая ссылка — писать общему менеджеру клуба.
 # Порядок подобран так, чтобы соседние сектора не совпадали по цвету.
 WHEEL = [
-    ("w1", "150 моггсов", UNCOMMON, False, "moggs", 150, 238),
-    ("w2", "GHK-Cu курс", LEGENDARY, False, "promo", 0, 3),
-    ("w3", "В другой раз", COMMON, True, "none", 0, 260),
-    ("w4", "Консультация Налимова", RARE, False, "promo", 0, 108),
-    ("w5", "Пенка для умывания", EPIC, False, "promo", 0, 10),
-    ("w6", "Перкуссионный массажёр", LEGENDARY, False, "promo", 0, 2),
-    ("w7", "В другой раз", COMMON, True, "none", 0, 260),
-    ("w8", "Разбор у куратора", RARE, False, "promo", 0, 119),
+    ("w1", "150 моггсов", UNCOMMON, False, "moggs", 150, 238, None),
+    ("w2", "GHK-Cu курс", LEGENDARY, False, "promo", 0, 3, "https://t.me/m/lPwuTvhINTM6"),
+    ("w3", "В другой раз", COMMON, True, "none", 0, 260, None),
+    ("w4", "Консультация Налимова", RARE, False, "promo", 0, 108, "https://t.me/m/_YUWVgG5YTk6"),
+    ("w5", "Пенка для умывания", EPIC, False, "promo", 0, 10, None),
+    ("w6", "Перкуссионный массажёр", LEGENDARY, False, "promo", 0, 2, "https://t.me/m/SA72PWqDZjcy"),
+    ("w7", "В другой раз", COMMON, True, "none", 0, 260, None),
+    ("w8", "Разбор у куратора", RARE, False, "promo", 0, 119, None),
 ]
 
 SHOP = [
@@ -127,11 +128,12 @@ async def seed(session: AsyncSession) -> None:
         update(Curator).where(Curator.id.not_in([c[0] for c in CURATORS])).values(active=False)
     )
 
-    for order, (sid, label, color, blank, kind, moggs, weight) in enumerate(WHEEL):
+    for order, (sid, label, color, blank, kind, moggs, weight, contact) in enumerate(WHEEL):
         sector = await session.get(WheelSector, sid) or WheelSector(id=sid)
         sector.label, sector.color, sector.blank = label, color, blank
         sector.reward_kind, sector.reward_moggs = kind, moggs
         sector.weight, sector.sort_order = weight, order
+        sector.contact_url = contact
         session.add(sector)
 
     for order, (sid, title, description, price) in enumerate(SHOP):

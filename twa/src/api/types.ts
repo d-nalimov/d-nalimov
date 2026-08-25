@@ -90,6 +90,8 @@ export interface Prize {
   title: string
   code: string
   source: PrizeSource
+  /** Личная ссылка на переписку за этим призом; пусто — общий менеджер клуба. */
+  contactUrl?: string | null
   createdAt: string
   expiresAt: string
   usedAt: string | null
@@ -101,6 +103,8 @@ export interface WheelSector {
   color: string
   /** Пустой сектор — «в другой раз». */
   blank?: boolean
+  /** Куда писать за этим призом. Сервер отдаёт её уже внутри приза. */
+  contactUrl?: string
 }
 
 export interface MoggsEntry {

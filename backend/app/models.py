@@ -128,6 +128,8 @@ class WheelSector(Base):
     reward_moggs: Mapped[int] = mapped_column(Integer, default=0)
     #: Вес в розыгрыше. Клиенту не отдаётся — сектор выбирает сервер.
     weight: Mapped[int] = mapped_column(Integer, default=1)
+    #: Куда писать за этим призом. Пусто — общий менеджер клуба.
+    contact_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
@@ -140,6 +142,8 @@ class ShopItem(Base):
     description: Mapped[str] = mapped_column(Text, default="")
     price: Mapped[int] = mapped_column(Integer)
     image: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    #: Куда писать за этим товаром. Пусто — общий менеджер клуба.
+    contact_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
@@ -152,6 +156,8 @@ class Prize(Base):
     title: Mapped[str] = mapped_column(String(128))
     code: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     source: Mapped[str] = mapped_column(String(16))
+    #: Копия ссылки на момент выдачи: приз останется рабочим, даже если каталог поменяют.
+    contact_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
