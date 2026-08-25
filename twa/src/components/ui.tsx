@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { SearchIcon } from './icons'
 
 export function Screen({
@@ -130,7 +131,9 @@ export function Sheet({
     window.setTimeout(onClose, SHEET_EXIT_MS)
   }
 
-  return (
+  // Портал в body: иначе стековый контекст любого родителя может увести
+  // шторку под нижнюю панель.
+  return createPortal(
     <div
       className={`sheet${leaving ? ' sheet--leaving' : ''}`}
       role="dialog"
@@ -142,6 +145,7 @@ export function Sheet({
       <div className="sheet__body">
         {typeof children === 'function' ? children(close) : children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

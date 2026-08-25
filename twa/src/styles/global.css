@@ -256,7 +256,9 @@ img {
 /* Смена экрана: короткий подъём с проявлением, чтобы переход читался,
    но не задерживал. */
 .page {
-  animation: page-in var(--dur) var(--ease) both;
+  /* backwards, а не both: с both после анимации остаётся единичный transform,
+     он создаёт стековый контекст, и шторка перестаёт перекрывать нижнюю панель. */
+  animation: page-in var(--dur) var(--ease) backwards;
 }
 
 @keyframes page-in {
