@@ -80,7 +80,7 @@ export function HomePage() {
             onClick={() => setPaywall(true)}
             type="button"
           >
-            Открыть полный доступ
+            Смотреть
           </button>
         </div>
       ) : null}
