@@ -6,8 +6,9 @@
   --surface: #1c1c1c;
   --surface-2: #262626;
   --surface-3: #333333;
-  --surface-light: #efefef;
-  --surface-light-2: #dedede;
+  /* Светлые карточки уроков и товаров: серый, а не белый. */
+  --surface-light: #d4d4d4;
+  --surface-light-2: #bdbdbd;
 
   --border: #333333;
   --border-soft: rgba(255, 255, 255, 0.08);
@@ -22,7 +23,9 @@
   --text-dim: #a6a6a6;
   --text-mute: #8a8a8a;
   --on-light: #111111;
-  --on-light-dim: #6d6d6d;
+  /* Приглушённый текст на сером фоне пришлось затемнить: прежний #6d6d6d
+     давал на нём 3.49:1. */
+  --on-light-dim: #555555;
 
   --radius-sm: 12px;
   --radius: 16px;
