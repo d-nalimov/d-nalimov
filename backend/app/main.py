@@ -25,7 +25,7 @@ async def lifespan(_: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="Кэш`ю API",
+        title="ПИК API",
         version="1.0.0",
         lifespan=lifespan,
         root_path=settings.root_path,

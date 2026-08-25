@@ -44,7 +44,7 @@ async def create_payment(
         settings,
         local_payment_id=payment.id,
         telegram_id=user.telegram_id,
-        description="Доступ к клубу Кэш`ю",
+        description="Доступ к клубу ПИК",
     )
 
     payment.provider_payment_id = data.get("id")

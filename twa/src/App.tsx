@@ -41,7 +41,7 @@ export function App() {
 
   if (!ready) {
     return (
-      <Screen title="Кэш`ю">
+      <Screen title="ПИК">
         <div className="stack">
           <Skeleton height={72} />
           <Skeleton height={96} />
@@ -53,7 +53,7 @@ export function App() {
 
   if (bootError) {
     return (
-      <Screen title="Кэш`ю">
+      <Screen title="ПИК">
         <div className="card">
           <div style={{ fontWeight: 700, marginBottom: 6 }}>{bootError}</div>
           <p className="muted" style={{ fontSize: 13 }}>

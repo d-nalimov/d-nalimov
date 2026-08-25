@@ -20,7 +20,7 @@ export function HomePage() {
   useBackButton(undefined)
 
   useEffect(() => {
-    document.title = 'Кэш`ю — клуб'
+    document.title = 'ПИК — клуб'
   }, [])
 
   const access = hasAccess()
