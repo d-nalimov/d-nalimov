@@ -33,8 +33,17 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
   if (!sectors.length) return null
 
   const sectorSize = 360 / sectors.length
+  // Каждый сектор — не заливка, а развёртка от тёмного края к светлой середине:
+  // цвет читается как объём, а не как плашка.
   const gradient = sectors
-    .map((s, i) => `${s.color} ${i * sectorSize}deg ${(i + 1) * sectorSize}deg`)
+    .flatMap((sector, i) => {
+      const start = i * sectorSize
+      return [
+        `${shade(sector.color, -0.2)} ${start}deg`,
+        `${shade(sector.color, 0.1)} ${start + sectorSize / 2}deg`,
+        `${shade(sector.color, -0.2)} ${start + sectorSize}deg`,
+      ]
+    })
     .join(', ')
 
   return (
@@ -43,7 +52,12 @@ export function PrizeWheel({ sectors, resultSectorId, spinning, onSpinEnd }: Pro
       <div
         className="wheel"
         style={{
-          background: `conic-gradient(${gradient})`,
+          background: [
+            // Затемнение к ступице и лёгкая виньетка по ободу добавляют глубины.
+            'radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.45) 18%,' +
+              ' rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.3) 100%)',
+            `conic-gradient(${gradient})`,
+          ].join(', '),
           transform: `rotate(${angle}deg)`,
         }}
         aria-hidden={spinning}
@@ -116,6 +130,17 @@ function labelColor(hex: string, blank?: boolean): string {
 
   if (blank) return dark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.55)'
   return dark ? '#101010' : '#ffffff'
+}
+
+/** Осветляет (amount > 0) или затемняет (amount < 0) цвет, смешивая с белым или чёрным. */
+function shade(hex: string, amount: number): string {
+  const value = hex.replace('#', '')
+  const target = amount > 0 ? 255 : 0
+  const mixed = [0, 2, 4].map((i) => {
+    const channel = Number.parseInt(value.slice(i, i + 2), 16)
+    return Math.round(channel + (target - channel) * Math.abs(amount))
+  })
+  return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`
 }
 
 export function WheelLegend({ sectors }: { sectors: WheelSector[] }) {
