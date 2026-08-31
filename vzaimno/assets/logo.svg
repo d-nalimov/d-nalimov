@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Взаимно">
+  <defs>
+    <g id="figure">
+      <rect x="-24" y="-26" width="38" height="56" fill="#111"/>
+      <path d="M-88 104c0-52 36-88 82-88s82 36 82 88z" fill="#111"/>
+      <circle cx="-6" cy="-54" r="44" fill="#111"/>
+      <path d="M36 -62l15 14c3 3 1 8-3 9l-12 2z" fill="#111"/>
+      <ellipse cx="17" cy="-62" rx="7" ry="4.8" fill="#F4EDDC"/>
+      <path d="M25 -30c8 1 12 5 13 11" stroke="#F4EDDC" stroke-width="5" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+  <g transform="translate(256 268)">
+    <g transform="rotate(-7)">
+      <rect x="-196" y="-150" width="182" height="292" rx="26" fill="#F4EDDC"/>
+      <g transform="translate(-112 6) scale(.9)">
+        <circle cx="-42" cy="-96" r="19" fill="#111"/>
+        <rect x="-72" y="-84" width="44" height="104" rx="22" fill="#111"/>
+        <circle cx="-18" cy="-60" r="50" fill="#111"/>
+        <use href="#figure"/>
+      </g>
+    </g>
+    <g transform="rotate(7)">
+      <rect x="14" y="-150" width="182" height="292" rx="26" fill="#F4EDDC"/>
+      <g transform="translate(112 6) scale(-.9 .9)">
+        <circle cx="-14" cy="-62" r="47" fill="#111"/>
+        <use href="#figure"/>
+      </g>
+    </g>
+    <g transform="translate(0 -8) scale(.5)">
+      <path fill="#E1242C" d="M0 118C-104 40-138 -6-138 -52c0-40 31-68 68-68 28 0 53 17 70 43 17-26 42-43 70-43 37 0 68 28 68 68 0 46-34 92-138 170Z"/>
+    </g>
+  </g>
+</svg>

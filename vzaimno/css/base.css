@@ -1,0 +1,112 @@
+/* Взаимно — базовые токены и каркас */
+:root{
+  --red:#E1242C;
+  --red-dark:#B8161E;
+  --red-soft:#FCE9E9;
+  --cream:#F4EDDC;
+  --cream-2:#EFE5CE;
+  --ink:#111111;
+  --ink-2:#4A4741;
+  --muted:#8C877E;
+  --line:#E7E2D6;
+  --bg:#FFFFFF;
+  --surface:#FFFFFF;
+  --surface-2:#FAF7F0;
+  --green:#22A06B;
+  --blue:#2D7FF9;
+  --gold:#D9A017;
+  --shadow-s:0 1px 2px rgba(17,17,17,.06), 0 2px 8px rgba(17,17,17,.05);
+  --shadow-m:0 6px 20px rgba(17,17,17,.10);
+  --shadow-l:0 18px 46px rgba(17,17,17,.18);
+  --r-s:10px; --r-m:16px; --r-l:24px; --r-xl:32px;
+  --header:56px;
+  --tabbar:62px;
+  --safe-b:env(safe-area-inset-bottom, 0px);
+  --font:"Inter","Golos Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+[data-theme="dark"]{
+  --cream:#2A2723;
+  --cream-2:#221F1C;
+  --ink:#F5F1E8;
+  --ink-2:#CFC9BC;
+  --muted:#948E83;
+  --line:#332F2A;
+  --bg:#141210;
+  --surface:#1C1917;
+  --surface-2:#221F1C;
+  --red-soft:#3A1F20;
+  --shadow-m:0 6px 20px rgba(0,0,0,.5);
+  --shadow-l:0 18px 46px rgba(0,0,0,.6);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.4;
+  color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 12% -10%, #FBF3E2 0%, transparent 60%),
+    radial-gradient(900px 520px at 105% 10%, #FDE7E7 0%, transparent 55%),
+    #F2EFE9;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+[data-theme="dark"] body{background:#0B0A09}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+a{color:var(--red);text-decoration:none}
+h1,h2,h3,h4,p,ul{margin:0}
+ul{padding:0;list-style:none}
+img{display:block;max-width:100%}
+::-webkit-scrollbar{width:0;height:0}
+
+/* Каркас устройства */
+.device{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  padding:0;
+}
+.device__screen{
+  position:relative;
+  width:100%;
+  height:100dvh;
+  background:var(--bg);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+@media (min-width:720px){
+  .device{padding:28px}
+  .device__screen{
+    width:420px;
+    height:min(880px, calc(100dvh - 56px));
+    border-radius:38px;
+    box-shadow:var(--shadow-l), 0 0 0 10px #171614, 0 0 0 11px #35322D;
+  }
+}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+.screen[hidden]{display:none}
+.screen--main{padding-bottom:0}
+[hidden]{display:none !important}
+
+.view{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+}
+.view--nopad{padding:0}
+
+/* Утилиты */
+.muted{color:var(--muted)}
+.center{text-align:center}
+.row{display:flex;align-items:center;gap:8px}
+.row--between{justify-content:space-between}
+.stack{display:flex;flex-direction:column;gap:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#E1242C">
+<title>Взаимно — сайт знакомств</title>
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+
+<div class="device">
+  <div class="device__screen" id="app">
+
+    <!-- ЭКРАН ВХОДА -->
+    <section class="screen screen--auth" id="screen-auth" data-screen="auth">
+      <div class="auth">
+        <div class="auth__brand">
+          <img src="assets/logo.svg" alt="Взаимно" class="auth__logo">
+          <h1 class="auth__title">Взаимно</h1>
+          <p class="auth__subtitle">Знакомства, которые начинаются с симпатии</p>
+        </div>
+
+        <form class="auth__form" id="form-phone" novalidate>
+          <label class="field">
+            <span class="field__label">Номер телефона</span>
+            <input class="field__input" id="input-phone" type="tel" inputmode="tel"
+                   placeholder="+7 (___) ___-__-__" autocomplete="tel">
+          </label>
+          <p class="field__error" id="phone-error" hidden></p>
+          <button class="btn btn--primary btn--block" type="submit">Получить код</button>
+          <p class="auth__legal">Продолжая, вы принимаете <a href="#">условия использования</a> и
+            <a href="#">политику конфиденциальности</a>.</p>
+        </form>
+
+        <form class="auth__form" id="form-code" hidden novalidate>
+          <p class="auth__hint">Код отправлен на <b id="code-phone"></b>.
+            <button type="button" class="linkbtn" id="btn-change-phone">Изменить</button></p>
+          <div class="codeinput" id="code-input">
+            <input class="codeinput__cell" inputmode="numeric" maxlength="1" aria-label="Цифра 1">
+            <input class="codeinput__cell" inputmode="numeric" maxlength="1" aria-label="Цифра 2">
+            <input class="codeinput__cell" inputmode="numeric" maxlength="1" aria-label="Цифра 3">
+            <input class="codeinput__cell" inputmode="numeric" maxlength="1" aria-label="Цифра 4">
+          </div>
+          <p class="field__error" id="code-error" hidden></p>
+          <p class="auth__hint auth__hint--demo">Демо-режим: код <b>1234</b></p>
+          <button class="btn btn--primary btn--block" type="submit">Войти</button>
+          <button class="btn btn--ghost btn--block" type="button" id="btn-resend" disabled>
+            Отправить код повторно <span id="resend-timer">(60)</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- АНКЕТА ПРИ РЕГИСТРАЦИИ -->
+    <section class="screen screen--onboarding" id="screen-onboarding" data-screen="onboarding" hidden>
+      <header class="topbar topbar--flat">
+        <button class="iconbtn" id="onb-back" aria-label="Назад" data-icon="back"></button>
+        <div class="progress"><div class="progress__bar" id="onb-progress"></div></div>
+        <span class="topbar__counter" id="onb-counter">1/4</span>
+      </header>
+      <div class="onboarding" id="onboarding-body"></div>
+      <footer class="onboarding__footer">
+        <button class="btn btn--primary btn--block" id="onb-next">Далее</button>
+      </footer>
+    </section>
+
+    <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+    <section class="screen screen--main" id="screen-main" data-screen="main" hidden>
+      <header class="topbar" id="topbar">
+        <div class="topbar__left" id="topbar-left"></div>
+        <div class="topbar__title" id="topbar-title">
+          <img src="assets/mark.svg" alt="" class="topbar__mark"><span>Взаимно</span>
+        </div>
+        <div class="topbar__right" id="topbar-right"></div>
+      </header>
+
+      <main class="view" id="view"></main>
+
+      <nav class="tabbar" id="tabbar">
+        <button class="tab is-active" data-tab="feed">
+          <span class="tab__icon" data-icon="cards"></span><span class="tab__label">Поиск</span>
+        </button>
+        <button class="tab" data-tab="likes">
+          <span class="tab__icon" data-icon="heart"></span><span class="tab__label">Симпатии</span>
+          <span class="tab__badge" id="badge-likes" hidden>0</span>
+        </button>
+        <button class="tab" data-tab="chats">
+          <span class="tab__icon" data-icon="chat"></span><span class="tab__label">Сообщения</span>
+          <span class="tab__badge" id="badge-chats" hidden>0</span>
+        </button>
+        <button class="tab" data-tab="profile">
+          <span class="tab__icon" data-icon="user"></span><span class="tab__label">Профиль</span>
+        </button>
+      </nav>
+    </section>
+
+    <div class="sheet" id="sheet" hidden>
+      <div class="sheet__backdrop" data-close-sheet></div>
+      <div class="sheet__panel" role="dialog" aria-modal="true">
+        <div class="sheet__grip"></div>
+        <div class="sheet__head">
+          <h2 class="sheet__title" id="sheet-title"></h2>
+          <button class="iconbtn" data-close-sheet aria-label="Закрыть" data-icon="close"></button>
+        </div>
+        <div class="sheet__body" id="sheet-body"></div>
+      </div>
+    </div>
+
+    <div class="match" id="match" hidden></div>
+    <div class="toasts" id="toasts"></div>
+  </div>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/feed.js"></script>
+<script src="js/likes.js"></script>
+<script src="js/chats.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
